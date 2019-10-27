@@ -20,8 +20,8 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-#ifndef _VST_HEADER__
-#define _VST_HEADER__
+#ifndef __VST_HEADER__
+#define __VST_HEADER__
 
 #include "public.sdk/source/vst/vstaudioeffect.h"
 #include "reverbprocess.h"

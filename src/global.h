@@ -14,8 +14,7 @@ namespace VST {
     static const char* VENDOR   = "igorski.nl";
 
     static const FUID FogPadProcessorUID( 0xBD8D5D24, 0xF8C211E9, 0xAD5DF883, 0x42644A14 );
-    static const FUID FogPadWithSideChainProcessorUID( 0xE7EA2412, 0xF8C211E9, 0xB2C4B28D, 0x42644A14 );
-    static const FUID FogPadControllerUID( 0xFB060EF8, 0xF8C211E9, 0xB9B1258E, 0x42644A14 );
+    static const FUID FogPadControllerUID( 0xE7EA2412, 0xF8C211E9, 0xB2C4B28D, 0x42644A14 );
 
     // set upon initialization, see vst.cpp
     static float SAMPLE_RATE = 44100.f;

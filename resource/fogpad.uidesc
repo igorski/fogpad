@@ -189,7 +189,7 @@
         <control-tag name="Unit1::ReverbFreeze"          tag="4" />
         <control-tag name="Unit1::ReverbPlaybackRate"    tag="5" />
         <control-tag name="Unit1::BitResolution"         tag="6" />
-        <control-tag name="Unit1::BitResolutionChain"    tag="7" />
+        <control-tag name="Unit1::BitCrusherChain"       tag="7" />
         <control-tag name="Unit1::LFOBitResolution"      tag="8" />
         <control-tag name="Unit1::LFOBitResolutionDepth" tag="9" />
         <control-tag name="Unit1::Decimator"             tag="10 "/>
