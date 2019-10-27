@@ -73,8 +73,8 @@ class ReverbProcess {
     static constexpr float MAX_RECORD_TIME_MS = 5000.f;
     static constexpr float MUTED              = 0;
     static constexpr float FIXED_GAIN         = 0.015f;
-    static constexpr float SCALE_WET          = 3;
-    static constexpr float SCALE_DRY          = 2;
+    static constexpr float SCALE_WET          = 1.f;
+    static constexpr float SCALE_DRY          = 1.f;
     static constexpr float SCALE_DAMP         = 0.4f;
     static constexpr float SCALE_ROOM         = 0.28f;
     static constexpr float OFFSET_ROOM        = 0.7f;
@@ -133,7 +133,8 @@ class ReverbProcess {
         AudioBuffer* _recordBuffer;  // contains the sample memory for drift mode
         AudioBuffer* _preMixBuffer;  // buffer used for the pre-delay effect mixing
         AudioBuffer* _postMixBuffer; // buffer used for the post-delay effect mixing
-        int _amountOfChannels;
+        int  _amountOfChannels;
+        int  _maxRecordIndex;
         int* _recordIndices;
 
         void setupFilters();         // generates comb and allpass filter buffers

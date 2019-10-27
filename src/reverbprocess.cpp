@@ -29,8 +29,9 @@ namespace Igorski {
 ReverbProcess::ReverbProcess( int amountOfChannels ) {
     _amountOfChannels = amountOfChannels;
 
-    _recordBuffer  = new AudioBuffer( amountOfChannels,  Calc::millisecondsToBuffer( MAX_RECORD_TIME_MS ));
-    _recordIndices = new int[ amountOfChannels ];
+    _maxRecordIndex = Calc::millisecondsToBuffer( MAX_RECORD_TIME_MS );
+    _recordBuffer   = new AudioBuffer( amountOfChannels, _maxRecordIndex );
+    _recordIndices  = new int[ amountOfChannels ];
     for ( int i = 0; i < amountOfChannels; ++i ) {
         _recordIndices[ i ] = 0;
     }
@@ -54,8 +55,8 @@ ReverbProcess::ReverbProcess( int amountOfChannels ) {
     mute();
 
     // will be lazily created in the process function
-    _preMixBuffer  = 0;
-    _postMixBuffer = 0;
+    _preMixBuffer  = nullptr;
+    _postMixBuffer = nullptr;
     _playbackRate  = 1.f;
 }
 

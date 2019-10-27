@@ -32,11 +32,9 @@ void ReverbProcess::process( SampleType** inBuffer, SampleType** outBuffer, int 
 
     SampleType inSample;
     float frac, s1, s2;
-    int i, t, t2, readIndex, recordIndex, channelDelayBufferChannel;
+    int i, t, t2, readIndex, channelDelayBufferChannel;
     bool hasDrift = ( _playbackRate != 1.0f );
     float orgPlaybackReadIndex = _playbackReadIndex;
-
-    int maxRecordIndex = _recordBuffer->bufferSize;
 
     // prepare the mix buffers and clone the incoming buffer contents into the pre-mix buffer
 
@@ -51,7 +49,6 @@ void ReverbProcess::process( SampleType** inBuffer, SampleType** outBuffer, int 
         float* channelPostMixBuffer  = _postMixBuffer->getBufferForChannel( c );
 
         orgPlaybackReadIndex = _playbackReadIndex;
-        recordIndex          = _recordIndices[ c ];
 
         // when processing the first channel, store the current effects properties
         // so each subsequent channel is processed using the same processor variables
@@ -67,7 +64,6 @@ void ReverbProcess::process( SampleType** inBuffer, SampleType** outBuffer, int 
             bitCrusher->process( channelPreMixBuffer, bufferSize );
 
         decimator->process( channelPreMixBuffer, bufferSize );
-        filter->process( channelPreMixBuffer, bufferSize, c );
 
         // REVERB processing applied onto the temp buffer
 
@@ -85,23 +81,17 @@ void ReverbProcess::process( SampleType** inBuffer, SampleType** outBuffer, int 
                 frac = _playbackReadIndex - t;
 
                 s1 = channelRecordBuffer[ t ];
-                s2 = channelRecordBuffer[ t2 < maxRecordIndex ? t2 : t ];
+                s2 = channelRecordBuffer[ t2 < _maxRecordIndex ? t2 : t ];
 
                 inputSample = s1 + ( s2 - s1 ) * frac;
 
-                if (( _playbackReadIndex += _playbackRate ) >= maxRecordIndex ) {
+                if (( _playbackReadIndex += _playbackRate ) >= _maxRecordIndex ) {
                     _playbackReadIndex = 0.f;
                 }
             }
             else {
-                // np drift enabled, take sample directly from the input buffer
-                inputSample = channelInBuffer[ i ];
-            }
-            // record the sample into the buffer so we can read it later when in drift mode
-            channelRecordBuffer[ recordIndex ] = channelPreMixBuffer[ i ] + inputSample;
-
-            if ( ++recordIndex >= maxRecordIndex ) {
-                recordIndex = 0;
+                // no drift enabled, take sample directly from the input buffer
+                inputSample = channelPreMixBuffer[ i ];
             }
 
             // ---- REVERB process
@@ -123,12 +113,10 @@ void ReverbProcess::process( SampleType** inBuffer, SampleType** outBuffer, int 
             channelPostMixBuffer[ i ] = processedSample/* * _wet1 + ( input * _dry ) */;
         }
 
-        // update last recording index for this channel
-
-        _recordIndices[ c ] = recordIndex;
-
         // POST MIX processing
         // apply the post mix effect processing
+
+        filter->process( channelPostMixBuffer, bufferSize, c );
 
         if ( bitCrusherPostMix )
             bitCrusher->process( channelPostMixBuffer, bufferSize );
@@ -166,7 +154,7 @@ void ReverbProcess::prepareMixBuffers( SampleType** inBuffer, int numInChannels,
     // if the pre mix buffer wasn't created yet or the buffer size has changed
     // delete existing buffer and create new one to match properties
 
-    if ( _preMixBuffer == 0 || _preMixBuffer->bufferSize != bufferSize ) {
+    if ( _preMixBuffer == nullptr || _preMixBuffer->bufferSize != bufferSize ) {
         delete _preMixBuffer;
         _preMixBuffer = new AudioBuffer( numInChannels, bufferSize );
     }
@@ -176,18 +164,34 @@ void ReverbProcess::prepareMixBuffers( SampleType** inBuffer, int numInChannels,
     // used for internal processing (see ReverbProcess::process)
 
     for ( int c = 0; c < numInChannels; ++c ) {
+
         SampleType* inChannelBuffer = ( SampleType* ) inBuffer[ c ];
-        float* outChannelBuffer     = ( float* ) _preMixBuffer->getBufferForChannel( c );
+        float* channelPremixBuffer  = ( float* ) _preMixBuffer->getBufferForChannel( c );
+        float* channelRecordBuffer  = ( float* ) _recordBuffer->getBufferForChannel( c );
+
+        int recordIndex = _recordIndices[ c ];
 
         for ( int i = 0; i < bufferSize; ++i ) {
-            outChannelBuffer[ i ] = ( float ) inChannelBuffer[ i ];
+            float sample = ( float ) inChannelBuffer[ i ];
+
+            // clone into the pre mix buffer for pre-processing
+            channelPremixBuffer[ i ] = sample;
+
+            // record into the record buffer for use with drift mode
+            channelRecordBuffer[ recordIndex ] = sample;
+
+            if ( ++recordIndex >= _maxRecordIndex ) {
+                recordIndex = 0;
+            }
         }
+        // update last recording index for this channel
+        _recordIndices[ c ] = recordIndex;
     }
 
     // if the post mix buffer wasn't created yet or the buffer size has changed
     // delete existing buffer and create new one to match properties
 
-    if ( _postMixBuffer == 0 || _postMixBuffer->bufferSize != bufferSize ) {
+    if ( _postMixBuffer == nullptr || _postMixBuffer->bufferSize != bufferSize ) {
         delete _postMixBuffer;
         _postMixBuffer = new AudioBuffer( numInChannels, bufferSize );
     }
