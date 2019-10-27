@@ -79,6 +79,6 @@ BEGIN_FACTORY_DEF( "igorski.nl",
                 0, "",                        // neither of these are used here
                 FULL_VERSION_STR,             // Plug-in version
                 kVstVersionString,            // the VST 3 SDK version (do not change this)
-                FogPad::createInstance )      // function pointer called when this component should be instantiated
+                FogPadController::createInstance ) // function pointer called when this component should be instantiated
 
 END_FACTORY
