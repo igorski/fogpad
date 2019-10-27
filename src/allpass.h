@@ -20,10 +20,11 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-#ifndef __COMB_H_INCLUDED__
-#define __COMB_H_INCLUDED__
+#ifndef __ALLPASS_H_INCLUDED__
+#define __ALLPASS_H_INCLUDED__
 
 #include "global.h"
+#include "calc.h"
 
 using namespace Steinberg;
 
@@ -32,11 +33,11 @@ class AllPass
 {
     public:
         AllPass();
-        void setBuffer( SAMPLE_TYPE *buf, int size );
-        inline SAMPLE_TYPE process( SAMPLE_TYPE input )
+        void setBuffer( float *buf, int size );
+        inline float process( float input )
         {
-            SAMPLE_TYPE output;
-            SAMPLE_TYPE bufout = _buffer[ _bufIndex ];
+            float output;
+            float bufout = _buffer[ _bufIndex ];
             undenormalise( bufout );
 
             output = -input + bufout;
@@ -48,12 +49,12 @@ class AllPass
             return output;
         }
         void mute();
-        SAMPLE_TYPE getFeedback();
-        void setFeedback( SAMPLE_TYPE val );
+        float getFeedback();
+        void setFeedback( float val );
 
     private:
-        SAMPLE_TYPE  _feedback;
-        SAMPLE_TYPE* _buffer;
+        float  _feedback;
+        float* _buffer;
         int _bufSize;
         int _bufIndex;
 };

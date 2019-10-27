@@ -27,7 +27,7 @@
 namespace Igorski {
 
 ReverbProcess::ReverbProcess( int amountOfChannels ) {
-    _amountOfChannels  = amountOfChannels;
+    _amountOfChannels = amountOfChannels;
 
     _recordBuffer  = new AudioBuffer( amountOfChannels,  Calc::millisecondsToBuffer( MAX_RECORD_TIME_MS ));
     _recordIndices = new int[ amountOfChannels ];
@@ -76,15 +76,15 @@ void ReverbProcess::mute()
     if ( getMode() >= FREEZE_MODE )
         return;
 
-    for ( int c = 0; c < amountOfChannels; ++c ) {
+    for ( int c = 0; c < _amountOfChannels; ++c ) {
         auto combData = _combFilters.at( c );
         for ( int i = 0; i < NUM_COMBS; i++ ) {
-            combData->filters.at( i ).mute();
+            combData->filters.at( i )->mute();
         }
 
         auto allPassData = _allpassFilters.at( c );
         for ( int i = 0; i < NUM_ALLPASSES; i++ ) {
-            allPassData->filters.at( i ).mute();
+            allPassData->filters.at( i )->mute();
         }
     }
 }
@@ -170,15 +170,15 @@ void ReverbProcess::setupFilters()
 
     // create filters and buffers per output channel
 
-    for ( int c = 0; c < amountOfChannels; ++c ) {
-        combFilters combData = new combFilters();
+    for ( int c = 0; c < _amountOfChannels; ++c ) {
+        combFilters* combData = new combFilters();
         _combFilters.push_back( combData );
 
         // comb filters
 
         for ( int i = 0; i < NUM_COMBS; ++i ) {
             // tune the comb to the host environments sample rate
-            int tuning = ( int ) (( float ) COMB_TUNINGS[ i ] / 44100.f ) * VST::SAMPLE_RATE );
+            int tuning = ( int ) ((( float ) COMB_TUNINGS[ i ] / 44100.f ) * VST::SAMPLE_RATE );
             int size = tuning + ( c * STEREO_SPREAD );
             float* buffer = new float[ size ];
 
@@ -190,12 +190,12 @@ void ReverbProcess::setupFilters()
 
         // all pass filters
 
-        allpassFilters allpassData = new allpassFilters();
+        allpassFilters* allpassData = new allpassFilters();
         _allpassFilters.push_back( allpassData );
 
         for ( int i = 0; i < NUM_ALLPASSES; ++i ) {
             // tune the comb to the host environments sample rate
-            int tuning = ( int ) (( float ) ALLPASS_TUNINGS[ i ] / 44100.f ) * VST::SAMPLE_RATE );
+            int tuning = ( int ) ((( float ) ALLPASS_TUNINGS[ i ] / 44100.f ) * VST::SAMPLE_RATE );
             int size = tuning + ( c * STEREO_SPREAD );
             float* buffer = new float[ size ];
 
@@ -237,11 +237,11 @@ void ReverbProcess::update()
         _gain      = FIXED_GAIN;
     }
 
-    for ( int c = 0; c < amountOfChannels; ++c ) {
+    for ( int c = 0; c < _amountOfChannels; ++c ) {
         auto combData = _combFilters.at( c );
         for ( int i = 0; i < NUM_COMBS; i++ ) {
-            combData->filters.at( i ).setFeedback( _roomSize1 );
-            combData->filters.at( i ).setDamp( _damp1 );
+            combData->filters.at( i )->setFeedback( _roomSize1 );
+            combData->filters.at( i )->setDamp( _damp1 );
         }
     }
 }

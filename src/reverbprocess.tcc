@@ -24,7 +24,7 @@ namespace Igorski
 {
 template <typename SampleType>
 void ReverbProcess::process( SampleType** inBuffer, SampleType** outBuffer, int numInChannels, int numOutChannels,
-                               int bufferSize, uint32 sampleFramesSize ) {
+                             int bufferSize, uint32 sampleFramesSize ) {
 
     // input and output buffers can be float or double as defined
     // by the templates SampleType value. Internally we process
@@ -59,7 +59,6 @@ void ReverbProcess::process( SampleType** inBuffer, SampleType** outBuffer, int 
         if ( c == 0 ) {
             decimator->store();
             filter->store();
-            flanger->store();
         }
 
         // PRE MIX processing
@@ -76,8 +75,8 @@ void ReverbProcess::process( SampleType** inBuffer, SampleType** outBuffer, int 
         // REVERB processing applied onto the temp buffer
 
         SampleType inputSample, processedSample;
-        combFilters combs        = _combFilters.at( c );
-        allpassFilters allpasses = _allpassFilters.at( c );
+        combFilters* combs        = _combFilters.at( c );
+        allpassFilters* allpasses = _allpassFilters.at( c );
 
         for ( i = 0; i < bufferSize; ++i )
         {
@@ -91,7 +90,7 @@ void ReverbProcess::process( SampleType** inBuffer, SampleType** outBuffer, int 
                 s1 = channelRecordBuffer[ t ];
                 s2 = channelRecordBuffer[ t2 < maxRecordIndex ? t2 : t ];
 
-                inputSample = ( s1 + ( s2 - s1 ) * frac;
+                inputSample = s1 + ( s2 - s1 ) * frac;
 
                 if (( _playbackReadIndex += _playbackRate ) >= maxRecordIndex ) {
                     _playbackReadIndex = 0.f;
@@ -115,12 +114,12 @@ void ReverbProcess::process( SampleType** inBuffer, SampleType** outBuffer, int 
 
             // Accumulate comb filters in parallel
             for ( int i = 0; i < NUM_COMBS; i++ ) {
-                processedSample += combs[ i ].process( input );
+                processedSample += combs->filters.at( i )->process( inputSample );
             }
 
             // Feed through allPasses in series
             for ( int i = 0; i < NUM_ALLPASSES; i++ ) {
-                processedSample = allpasses[ i ].process( processedSample );
+                processedSample = allpasses->filters.at( i )->process( processedSample );
             }
 
             // write the reverberated sample into the post mix buffer
@@ -163,7 +162,6 @@ void ReverbProcess::process( SampleType** inBuffer, SampleType** outBuffer, int 
         if ( c < ( numInChannels - 1 )) {
             decimator->restore();
             filter->restore();
-            flanger->restore();
         }
     }
 

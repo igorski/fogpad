@@ -27,6 +27,10 @@
 #include <algorithm>
 #include "global.h"
 
+// internally we handle all audio as 32-bit floats (hence 0x7f800000)
+// this methods is used by comb and allpass
+#define undenormalise(sample) ((((*(uint32 *)&(sample))&0x7f800000)==0)&&((sample)!=0.f))
+
 /**
  * convenience utilities to process values
  * common to the VST plugin context

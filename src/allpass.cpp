@@ -30,7 +30,7 @@
      setFeedback( 0.5f );
  }
 
- void AllPass::setBuffer( SAMPLE_TYPE *buf, int size )
+ void AllPass::setBuffer( float *buf, int size )
  {
      _buffer  = buf;
      _bufSize = size;
@@ -43,12 +43,12 @@
      }
  }
 
- SAMPLE_TYPE AllPass::getFeedback()
+ float AllPass::getFeedback()
  {
      return _feedback;
  }
 
- void AllPass::setFeedback( SAMPLE_TYPE val )
+ void AllPass::setFeedback( float val )
  {
      _feedback = val;
  }

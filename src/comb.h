@@ -24,6 +24,7 @@
 #define __COMB_H_INCLUDED__
 
 #include "global.h"
+#include "calc.h"
 
 using namespace Steinberg;
 
@@ -32,10 +33,10 @@ class Comb
 {
     public:
         Comb();
-        void setBuffer( SAMPLE_TYPE *buf, int size );
-        inline SAMPLE_TYPE process( SAMPLE_TYPE input )
+        void setBuffer( float *buf, int size );
+        inline float process( float input )
         {
-            SAMPLE_TYPE output = _buffer[ _bufIndex ];
+            float output = _buffer[ _bufIndex ];
             undenormalise( output );
 
             _filterStore = ( output * _damp2 ) + ( _filterStore * _damp1 );
@@ -48,17 +49,17 @@ class Comb
             return output;
         }
         void mute();
-        SAMPLE_TYPE getDamp();
-        void setDamp( SAMPLE_TYPE val );
-        SAMPLE_TYPE getFeedback();
-        void setFeedback( SAMPLE_TYPE val );
+        float getDamp();
+        void setDamp( float val );
+        float getFeedback();
+        void setFeedback( float val );
 
     private:
-        SAMPLE_TYPE  _feedback;
-        SAMPLE_TYPE  _filterStore;
-        SAMPLE_TYPE  _damp1;
-        SAMPLE_TYPE  _damp2;
-        SAMPLE_TYPE* _buffer;
+        float  _feedback;
+        float  _filterStore;
+        float  _damp1;
+        float  _damp2;
+        float* _buffer;
         int _bufSize;
         int _bufIndex;
 };

@@ -30,7 +30,7 @@
      _bufIndex    = 0;
  }
 
- void Comb::setBuffer( SAMPLE_TYPE *buf, int size )
+ void Comb::setBuffer( float *buf, int size )
  {
      _buffer  = buf;
      _bufSize = size;
@@ -43,23 +43,23 @@
      }
  }
 
- SAMPLE_TYPE Comb::getDamp()
+ float Comb::getDamp()
  {
      return _damp1;
  }
 
- void Comb::setDamp( SAMPLE_TYPE val )
+ void Comb::setDamp( float val )
  {
      _damp1 = val;
      _damp2 = 1 - val;
  }
 
- SAMPLE_TYPE Comb::getFeedback()
+ float Comb::getFeedback()
  {
      return _feedback;
  }
 
- void Comb::setFeedback( SAMPLE_TYPE val )
+ void Comb::setFeedback( float val )
  {
      _feedback = val;
  }
