@@ -66,11 +66,8 @@ void ReverbProcess::process( SampleType** inBuffer, SampleType** outBuffer, int 
         if ( !bitCrusherPostMix )
             bitCrusher->process( channelPreMixBuffer, bufferSize );
 
-        if ( !decimatorPostMix )
-            decimator->process( channelPreMixBuffer, bufferSize );
-
-        if ( !filterPostMix )
-            filter->process( channelPreMixBuffer, bufferSize, c );
+        decimator->process( channelPreMixBuffer, bufferSize );
+        filter->process( channelPreMixBuffer, bufferSize, c );
 
         // REVERB processing applied onto the temp buffer
 
@@ -113,12 +110,12 @@ void ReverbProcess::process( SampleType** inBuffer, SampleType** outBuffer, int 
             inputSample *= _gain;
 
             // Accumulate comb filters in parallel
-            for ( int i = 0; i < NUM_COMBS; i++ ) {
+            for ( int i = 0; i < VST::NUM_COMBS; i++ ) {
                 processedSample += combs->filters.at( i )->process( inputSample );
             }
 
             // Feed through allPasses in series
-            for ( int i = 0; i < NUM_ALLPASSES; i++ ) {
+            for ( int i = 0; i < VST::NUM_ALLPASSES; i++ ) {
                 processedSample = allpasses->filters.at( i )->process( processedSample );
             }
 
@@ -133,14 +130,8 @@ void ReverbProcess::process( SampleType** inBuffer, SampleType** outBuffer, int 
         // POST MIX processing
         // apply the post mix effect processing
 
-        if ( decimatorPostMix )
-            decimator->process( channelPostMixBuffer, bufferSize );
-
         if ( bitCrusherPostMix )
             bitCrusher->process( channelPostMixBuffer, bufferSize );
-
-        if ( filterPostMix )
-            filter->process( channelPostMixBuffer, bufferSize, c );
 
         // mix the input and processed post mix buffers into the output buffer
 

@@ -78,12 +78,12 @@ void ReverbProcess::mute()
 
     for ( int c = 0; c < _amountOfChannels; ++c ) {
         auto combData = _combFilters.at( c );
-        for ( int i = 0; i < NUM_COMBS; i++ ) {
+        for ( int i = 0; i < VST::NUM_COMBS; i++ ) {
             combData->filters.at( i )->mute();
         }
 
         auto allPassData = _allpassFilters.at( c );
-        for ( int i = 0; i < NUM_ALLPASSES; i++ ) {
+        for ( int i = 0; i < VST::NUM_ALLPASSES; i++ ) {
             allPassData->filters.at( i )->mute();
         }
     }
@@ -176,9 +176,9 @@ void ReverbProcess::setupFilters()
 
         // comb filters
 
-        for ( int i = 0; i < NUM_COMBS; ++i ) {
+        for ( int i = 0; i < VST::NUM_COMBS; ++i ) {
             // tune the comb to the host environments sample rate
-            int tuning = ( int ) ((( float ) COMB_TUNINGS[ i ] / 44100.f ) * VST::SAMPLE_RATE );
+            int tuning = ( int ) ((( float ) VST::COMB_TUNINGS[ i ] / 44100.f ) * VST::SAMPLE_RATE );
             int size = tuning + ( c * STEREO_SPREAD );
             float* buffer = new float[ size ];
 
@@ -193,9 +193,9 @@ void ReverbProcess::setupFilters()
         allpassFilters* allpassData = new allpassFilters();
         _allpassFilters.push_back( allpassData );
 
-        for ( int i = 0; i < NUM_ALLPASSES; ++i ) {
+        for ( int i = 0; i < VST::NUM_ALLPASSES; ++i ) {
             // tune the comb to the host environments sample rate
-            int tuning = ( int ) ((( float ) ALLPASS_TUNINGS[ i ] / 44100.f ) * VST::SAMPLE_RATE );
+            int tuning = ( int ) ((( float ) VST::ALLPASS_TUNINGS[ i ] / 44100.f ) * VST::SAMPLE_RATE );
             int size = tuning + ( c * STEREO_SPREAD );
             float* buffer = new float[ size ];
 
@@ -239,7 +239,7 @@ void ReverbProcess::update()
 
     for ( int c = 0; c < _amountOfChannels; ++c ) {
         auto combData = _combFilters.at( c );
-        for ( int i = 0; i < NUM_COMBS; i++ ) {
+        for ( int i = 0; i < VST::NUM_COMBS; i++ ) {
             combData->filters.at( i )->setFeedback( _roomSize1 );
             combData->filters.at( i )->setDamp( _damp1 );
         }

@@ -71,8 +71,6 @@ class ReverbProcess {
     };
 
     static constexpr float MAX_RECORD_TIME_MS = 5000.f;
-    static constexpr int NUM_COMBS            = 8;
-    static constexpr int NUM_ALLPASSES        = 4;
     static constexpr float MUTED              = 0;
     static constexpr float FIXED_GAIN         = 0.015f;
     static constexpr float SCALE_WET          = 3;
@@ -93,12 +91,6 @@ class ReverbProcess {
 
     static constexpr float MIN_PLAYBACK_RATE = 0.5f;
     static constexpr float MAX_PLAYBACK_RATE = 1.5f;
-
-    // These values are tuned to 44.1 kHz sample rate and will be
-    // recalculated to match the host sample recalculated
-
-    static constexpr int COMB_TUNINGS[ NUM_COMBS ] = { 1116, 1188, 1277, 1356, 1422, 1491, 1557, 1617 };
-    static constexpr int ALLPASS_TUNINGS[ NUM_ALLPASSES ] = { 556, 441, 341, 225 };
 
     public:
         ReverbProcess( int amountOfChannels );
@@ -136,8 +128,6 @@ class ReverbProcess {
         // the delayed signal itself (false = on input, true = on delay)
 
         bool bitCrusherPostMix;
-        bool decimatorPostMix;
-        bool filterPostMix;
 
     private:
         AudioBuffer* _recordBuffer;  // contains the sample memory for drift mode

@@ -41,18 +41,17 @@ namespace Igorski {
 // FogPad Implementation
 //------------------------------------------------------------------------
 FogPad::FogPad()
-: fDelayTime( 0.125f )
-, fDelayHostSync( 1.f )
-, fDelayFeedback( 0.2f )
-, fDelayMix( .5f )
+: fReverbSize( 0.5f )
+, fReverbWidth( 1.f )
+, fReverbDryMix( 1.f )
+, fReverbWetMix( 5.f )
+, fReverbFreeze( 0.f )
+, fReverbPlaybackRate( 0.5f )
 , fBitResolution( 1.f )
 , fBitResolutionChain( 1.f )
 , fLFOBitResolution( .0f )
 , fLFOBitResolutionDepth( .75f )
 , fDecimator( 1.f )
-, fLFODecimator( 0.f )
-, fDecimatorChain( 0.f )
-, fFilterChain( 1.f )
 , fFilterCutoff( .5f )
 , fFilterResonance( 1.f )
 , fLFOFilter( 0.f )
@@ -144,24 +143,34 @@ tresult PLUGIN_API FogPad::process( ProcessData& data )
                     // in some wanted case for specific kind of parameter it makes sense to retrieve all points
                     // and process the whole audio block in small blocks.
 
-                    case kDelayTimeId:
+                    case kReverbSizeId:
                         if ( paramQueue->getPoint( numPoints - 1, sampleOffset, value ) == kResultTrue )
-                            fDelayTime = ( float ) value;
+                            fReverbSize = ( float ) value;
                         break;
 
-                    case kDelayHostSyncId:
+                    case kReverbWidthId:
                         if ( paramQueue->getPoint( numPoints - 1, sampleOffset, value ) == kResultTrue )
-                            fDelayHostSync = ( float ) value;
+                            fReverbWidth = ( float ) value;
                         break;
 
-                    case kDelayFeedbackId:
+                    case kReverbDryMixId:
                         if ( paramQueue->getPoint( numPoints - 1, sampleOffset, value ) == kResultTrue )
-                            fDelayFeedback = ( float ) value;
+                            fReverbDryMix = ( float ) value;
                         break;
 
-                    case kDelayMixId:
+                    case kReverbWetMixId:
                         if ( paramQueue->getPoint( numPoints - 1, sampleOffset, value ) == kResultTrue )
-                            fDelayMix = ( float ) value;
+                            fReverbWetMix = ( float ) value;
+                        break;
+
+                    case kReverbFreezeId:
+                        if ( paramQueue->getPoint( numPoints - 1, sampleOffset, value ) == kResultTrue )
+                            fReverbFreeze = ( float ) value;
+                        break;
+
+                    case kReverbPlaybackRateId:
+                        if ( paramQueue->getPoint( numPoints - 1, sampleOffset, value ) == kResultTrue )
+                            fReverbPlaybackRate = ( float ) value;
                         break;
 
                     case kBitResolutionId:
@@ -189,21 +198,6 @@ tresult PLUGIN_API FogPad::process( ProcessData& data )
                             fDecimator = ( float ) value;
                         break;
 
-                    case kDecimatorChainId:
-                        if ( paramQueue->getPoint( numPoints - 1, sampleOffset, value ) == kResultTrue )
-                            fDecimatorChain = ( float ) value;
-                        break;
-
-                    case kLFODecimatorId:
-                        if ( paramQueue->getPoint( numPoints - 1, sampleOffset, value ) == kResultTrue )
-                            fLFODecimator = ( float ) value;
-                        break;
-
-                    case kFilterChainId:
-                        if ( paramQueue->getPoint( numPoints - 1, sampleOffset, value ) == kResultTrue )
-                            fFilterChain = ( float ) value;
-                        break;
-
                     case kFilterCutoffId:
                         if ( paramQueue->getPoint( numPoints - 1, sampleOffset, value ) == kResultTrue )
                             fFilterCutoff = ( float ) value;
@@ -223,6 +217,7 @@ tresult PLUGIN_API FogPad::process( ProcessData& data )
                         if ( paramQueue->getPoint( numPoints - 1, sampleOffset, value ) == kResultTrue )
                             fLFOFilterDepth = ( float ) value;
                         break;
+
                 }
                 syncModel();
             }
@@ -304,20 +299,28 @@ tresult PLUGIN_API FogPad::setState( IBStream* state )
 {
     // called when we load a preset, the model has to be reloaded
 
-    float savedDelayTime = 0.f;
-    if ( state->read( &savedDelayTime, sizeof ( float )) != kResultOk )
+    float savedReverbSize = 0.f;
+    if ( state->read( &savedReverbSize, sizeof ( float )) != kResultOk )
         return kResultFalse;
 
-    float savedDelayHostSync = 0.f;
-    if ( state->read( &savedDelayHostSync, sizeof ( float )) != kResultOk )
+    float savedReverbWidth = 0.f;
+    if ( state->read( &savedReverbWidth, sizeof ( float )) != kResultOk )
         return kResultFalse;
 
-    float savedDelayFeedback = 0.f;
-    if ( state->read( &savedDelayFeedback, sizeof ( float )) != kResultOk )
+    float savedReverbDryMix = 0.f;
+    if ( state->read( &savedReverbDryMix, sizeof ( float )) != kResultOk )
         return kResultFalse;
 
-    float savedDelayMix = 0.f;
-    if ( state->read( &savedDelayMix, sizeof ( float )) != kResultOk )
+    float savedReverbWetMix = 0.f;
+    if ( state->read( &savedReverbWetMix, sizeof ( float )) != kResultOk )
+        return kResultFalse;
+
+    float savedReverbFreeze = 0.f;
+    if ( state->read( &savedReverbFreeze, sizeof ( float )) != kResultOk )
+        return kResultFalse;
+
+    float savedReverbPlaybackRate = 0.f;
+    if ( state->read( &savedReverbPlaybackRate, sizeof ( float )) != kResultOk )
         return kResultFalse;
 
     float savedBitResolution = 0.f;
@@ -340,69 +343,55 @@ tresult PLUGIN_API FogPad::setState( IBStream* state )
     if ( state->read( &savedDecimator, sizeof ( float )) != kResultOk )
         return kResultFalse;
 
-    float savedDecimatorChain = 0.f;
-    if ( state->read( &savedDecimatorChain, sizeof ( float )) != kResultOk )
-        return kResultFalse;
-
-    float savedLFODecimator = 1.f;
-    if ( state->read( &savedLFODecimator, sizeof ( float )) != kResultOk )
-        return kResultFalse;
-
-    float savedFilterChain = 0.f;
-    if ( state->read( &savedFilterChain, sizeof ( float )) != kResultOk )
-        return kResultFalse;
-
-    float savedFilterCutoff = 1.f;
+    float savedFilterCutoff = 0.f;
     if ( state->read( &savedFilterCutoff, sizeof ( float )) != kResultOk )
         return kResultFalse;
 
-    float savedFilterResonance = 1.f;
+    float savedFilterResonance = 0.f;
     if ( state->read( &savedFilterResonance, sizeof ( float )) != kResultOk )
         return kResultFalse;
 
-    float savedLFOFilter = 1.f;
+    float savedLFOFilter = 0.f;
     if ( state->read( &savedLFOFilter, sizeof ( float )) != kResultOk )
         return kResultFalse;
 
-    float savedLFOFilterDepth = 1.f;
+    float savedLFOFilterDepth = 0.f;
     if ( state->read( &savedLFOFilterDepth, sizeof ( float )) != kResultOk )
         return kResultFalse;
 
 #if BYTEORDER == kBigEndian
-    SWAP_32( savedDelayTime )
-    SWAP_32( savedDelayHostSync )
-    SWAP_32( savedDelayFeedback )
-    SWAP_32( savedDelayMix )
-    SWAP_32( savedBitResolution )
-    SWAP_32( savedBitResolutionChain )
-    SWAP_32( savedLFOBitResolution )
-    SWAP_32( savedLFOBitResolutionDepth )
-    SWAP_32( savedDecimator )
-    SWAP_32( savedDecimatorChain )
-    SWAP_32( savedLFODecimator )
-    SWAP_32( savedFilterChain )
-    SWAP_32( savedFilterCutoff )
-    SWAP_32( savedFilterResonance )
-    SWAP_32( savedLFOFilter )
-    SWAP_32( savedLFOFilterDepth )
+    SWAP32( savedReverbSize );
+    SWAP32( savedReverbWidth );
+    SWAP32( savedReverbDryMix );
+    SWAP32( savedReverbWetMix );
+    SWAP32( savedReverbFreeze );
+    SWAP32( savedReverbPlaybackRate );
+    SWAP32( savedBitResolution );
+    SWAP32( savedBitResolutionChain );
+    SWAP32( savedLFOBitResolution );
+    SWAP32( savedLFOBitResolutionDepth );
+    SWAP32( savedDecimator );
+    SWAP32( savedFilterCutoff );
+    SWAP32( savedFilterResonance );
+    SWAP32( savedLFOFilter );
+    SWAP32( savedLFOFilterDepth );
 #endif
 
-    fDelayTime             = savedDelayTime;
-    fDelayHostSync         = savedDelayHostSync;
-    fDelayFeedback         = savedDelayFeedback;
-    fDelayMix              = savedDelayMix;
-    fBitResolution         = savedBitResolution;
-    fBitResolutionChain    = savedBitResolutionChain;
-    fLFOBitResolution      = savedLFOBitResolution;
-    fLFOBitResolutionDepth = savedLFOBitResolutionDepth;
-    fDecimator             = savedDecimator;
-    fDecimatorChain        = savedDecimatorChain;
-    fLFODecimator          = savedLFODecimator;
-    fFilterChain           = savedFilterChain;
-    fFilterCutoff          = savedFilterCutoff;
-    fFilterResonance       = savedFilterResonance;
-    fLFOFilter             = savedLFOFilter;
-    fLFOFilterDepth        = savedLFOFilterDepth;
+    fReverbSize             = savedReverbSize;
+    fReverbWidth            = savedReverbWidth;
+    fReverbDryMix           = savedReverbDryMix;
+    fReverbWetMix           = savedReverbWetMix;
+    fReverbFreeze           = savedReverbFreeze,
+    fReverbPlaybackRate     = savedReverbPlaybackRate;
+    fBitResolution          = savedBitResolution;
+    fBitResolutionChain     = savedBitResolutionChain;
+    fLFOBitResolution       = savedLFOBitResolution;
+    fLFOBitResolutionDepth  = savedLFOBitResolutionDepth;
+    fDecimator              = savedDecimator;
+    fFilterCutoff           = savedFilterCutoff;
+    fFilterResonance        = savedFilterResonance;
+    fLFOFilter              = savedLFOFilter;
+    fLFOFilterDepth         = savedLFOFilterDepth;
 
     syncModel();
 
@@ -444,58 +433,55 @@ tresult PLUGIN_API FogPad::getState( IBStream* state )
 {
     // here we need to save the model
 
-    float toSaveDelayTime             = fDelayTime;
-    float toSavedDelayHostSync        = fDelayHostSync;
-    float toSaveDelayFeedback         = fDelayFeedback;
-    float toSaveDelayMix              = fDelayMix;
+    float toSaveReverbSize            = fReverbSize;
+    float toSaveReverbWidth           = fReverbWidth;
+    float toSaveReverbDryMix          = fReverbDryMix;
+    float toSaveReverbWetMix          = fReverbWetMix;
+    float toSaveReverbFreeze          = fReverbFreeze;
+    float toSaveReverbPlaybackRate    = fReverbPlaybackRate;
     float toSaveBitResolution         = fBitResolution;
     float toSaveBitResolutionChain    = fBitResolutionChain;
     float toSaveLFOBitResolution      = fLFOBitResolution;
     float toSaveLFOBitResolutionDepth = fLFOBitResolutionDepth;
     float toSaveDecimator             = fDecimator;
-    float toSaveDecimatorChain        = fDecimatorChain;
-    float toSaveLFODecimator          = fLFODecimator;
-    float toSaveFilterChain           = fFilterChain;
     float toSaveFilterCutoff          = fFilterCutoff;
     float toSaveFilterResonance       = fFilterResonance;
     float toSaveLFOFilter             = fLFOFilter;
     float toSaveLFOFilterDepth        = fLFOFilterDepth;
 
 #if BYTEORDER == kBigEndian
-    SWAP_32( toSaveDelayTime )
-    SWAP_32( toSavedDelayHostSync )
-    SWAP_32( toSaveDelayFeedback )
-    SWAP_32( toSaveDelayMix )
-    SWAP_32( toSaveBitResolution )
-    SWAP_32( toSaveBitResolutionChain )
-    SWAP_32( toSaveLFOBitResolution )
-    SWAP_32( toSaveLFOBitResolutionDepth )
-    SWAP_32( toSaveDecimator )
-    SWAP_32( toSaveDecimatorChain )
-    SWAP_32( toSaveLFODecimator )
-    SWAP_32( toSaveFilterChain )
-    SWAP_32( toSaveFilterCutoff )
-    SWAP_32( toSaveFilterResonance )
-    SWAP_32( toSaveLFOFilter )
-    SWAP_32( toSaveLFOFilterDepth )
+    SWAP32( toSaveReverbSize );
+    SWAP32( toSaveReverbWidth );
+    SWAP32( toSaveReverbDryMix );
+    SWAP32( toSaveReverbWetMix );
+    SWAP32( toSaveReverbFreeze );
+    SWAP32( toSaveReverbPlaybackRate );
+    SWAP32( toSaveBitResolution );
+    SWAP32( toSaveBitResolutionChain );
+    SWAP32( toSaveLFOBitResolution );
+    SWAP32( toSaveLFOBitResolutionDepth );
+    SWAP32( toSaveDecimator );
+    SWAP32( toSaveFilterCutoff );
+    SWAP32( toSaveFilterResonance );
+    SWAP32( toSaveLFOFilter );
+    SWAP32( toSaveLFOFilterDepth );
 #endif
 
-    state->write( &toSaveDelayTime,             sizeof( float ));
-    state->write( &toSavedDelayHostSync,        sizeof( float ));
-    state->write( &toSaveDelayFeedback,         sizeof( float ));
-    state->write( &toSaveDelayMix,              sizeof( float ));
-    state->write( &toSaveBitResolution,         sizeof( float ));
-    state->write( &toSaveBitResolutionChain,    sizeof( float ));
-    state->write( &toSaveLFOBitResolution,      sizeof( float ));
-    state->write( &toSaveLFOBitResolutionDepth, sizeof( float ));
-    state->write( &toSaveDecimator,             sizeof( float ));
-    state->write( &toSaveDecimatorChain,        sizeof( float ));
-    state->write( &toSaveLFODecimator,          sizeof( float ));
-    state->write( &toSaveFilterChain,           sizeof( float ));
-    state->write( &toSaveFilterCutoff,          sizeof( float ));
-    state->write( &toSaveFilterResonance,       sizeof( float ));
-    state->write( &toSaveLFOFilter,             sizeof( float ));
-    state->write( &toSaveLFOFilterDepth,        sizeof( float ));
+    state->write( &toSaveReverbSize            , sizeof( float ));
+    state->write( &toSaveReverbWidth           , sizeof( float ));
+    state->write( &toSaveReverbDryMix          , sizeof( float ));
+    state->write( &toSaveReverbWetMix          , sizeof( float ));
+    state->write( &toSaveReverbFreeze          , sizeof( float ));
+    state->write( &toSaveReverbPlaybackRate    , sizeof( float ));
+    state->write( &toSaveBitResolution         , sizeof( float ));
+    state->write( &toSaveBitResolutionChain    , sizeof( float ));
+    state->write( &toSaveLFOBitResolution      , sizeof( float ));
+    state->write( &toSaveLFOBitResolutionDepth , sizeof( float ));
+    state->write( &toSaveDecimator             , sizeof( float ));
+    state->write( &toSaveFilterCutoff          , sizeof( float ));
+    state->write( &toSaveFilterResonance       , sizeof( float ));
+    state->write( &toSaveLFOFilter             , sizeof( float ));
+    state->write( &toSaveLFOFilterDepth        , sizeof( float ));
 
     return kResultOk;
 }
@@ -618,19 +604,19 @@ tresult PLUGIN_API FogPad::notify( IMessage* message )
 
 void FogPad::syncModel()
 {
-    reverbProcess->syncDelayToHost = Calc::toBool( fDelayHostSync );
-    reverbProcess->setDelayTime( fDelayTime );
-    reverbProcess->setDelayFeedback( fDelayFeedback );
-    reverbProcess->setDelayMix( fDelayMix );
+    reverbProcess->setRoomSize( fReverbSize );
+    reverbProcess->setWidth( fReverbWidth );
+    reverbProcess->setDry( fReverbDryMix );
+    reverbProcess->setWet( fReverbWetMix );
+    reverbProcess->setMode( fReverbFreeze );
+    reverbProcess->setPlaybackRate( fReverbPlaybackRate );
 
     reverbProcess->bitCrusherPostMix = Calc::toBool( fBitResolutionChain );
-    reverbProcess->decimatorPostMix  = Calc::toBool( fDecimatorChain );
-    reverbProcess->filterPostMix     = Calc::toBool( fFilterChain );
 
     reverbProcess->bitCrusher->setAmount( fBitResolution );
     reverbProcess->bitCrusher->setLFO( fLFOBitResolution, fLFOBitResolutionDepth );
     reverbProcess->decimator->setBits( ( int )( fDecimator * 32.f ));
-    reverbProcess->decimator->setRate( fLFODecimator );
+    //reverbProcess->decimator->setRate( fLFODecimator );
     reverbProcess->filter->updateProperties( fFilterCutoff, fFilterResonance, fLFOFilter, fLFOFilterDepth );
 }
 

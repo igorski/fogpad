@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 Igor Zinken - https://www.igorski.nl
+ * Copyright (c) 2018-2019 Igor Zinken - https://www.igorski.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -74,32 +74,46 @@ tresult PLUGIN_API FogPadController::initialize( FUnknown* context )
     addUnit( unit );
     int32 unitId = 1;
 
-    // Delay controls
+    // Reverb controls
 
-    RangeParameter* delayTimeParam = new RangeParameter(
-        USTRING( "Delay time" ), kDelayTimeId, USTRING( "seconds" ),
+    RangeParameter* reverbSizeParam = new RangeParameter(
+        USTRING( "Reverb size" ), kReverbSizeId, USTRING( "0 - 1" ),
         0.f, 1.f, 0.f,
         0, ParameterInfo::kCanAutomate, unitId
     );
-    parameters.addParameter( delayTimeParam );
+    parameters.addParameter( reverbSizeParam );
+
+    RangeParameter* reverbWidthParam = new RangeParameter(
+        USTRING( "Reverb width" ), kReverbWidthId, USTRING( "0 - 1" ),
+        0.f, 1.f, 0.f,
+        0, ParameterInfo::kCanAutomate, unitId
+    );
+    parameters.addParameter( reverbWidthParam );
+
+    RangeParameter* reverbDryMixParam = new RangeParameter(
+        USTRING( "Reverb dry mix" ), kReverbDryMixId, USTRING( "0 - 1" ),
+        0.f, 1.f, 0.f,
+        0, ParameterInfo::kCanAutomate, unitId
+    );
+    parameters.addParameter( reverbDryMixParam );
+
+    RangeParameter* reverbWetMixParam = new RangeParameter(
+        USTRING( "Reverb wet mix" ), kReverbWetMixId, USTRING( "0 - 1" ),
+        0.f, 1.f, 0.f,
+        0, ParameterInfo::kCanAutomate, unitId
+    );
+    parameters.addParameter( reverbWetMixParam );
 
     parameters.addParameter(
-        USTRING( "Delay host sync" ), 0, 1, 0, ParameterInfo::kCanAutomate, kDelayHostSyncId, unitId
+        USTRING( "Reverb feeze mode" ), 0, 1, 0, ParameterInfo::kCanAutomate, kReverbFreezeId, unitId
     );
 
-    RangeParameter* delayFeedbackParam = new RangeParameter(
-        USTRING( "Delay feedback" ), kDelayFeedbackId, USTRING( "0 - 1" ),
-        0.f, 1.f, 0.f,
-        0, ParameterInfo::kCanAutomate, unitId
-     );
-    parameters.addParameter( delayFeedbackParam );
-
-    RangeParameter* delayMixParam = new RangeParameter(
-        USTRING( "Delay mix" ), kDelayMixId, USTRING( "0 - 1" ),
+    RangeParameter* reverbPlaybackRateParam = new RangeParameter(
+        USTRING( "Reverb playback rate" ), kReverbPlaybackRateId, USTRING( "0 - 1" ),
         0.f, 1.f, 0.f,
         0, ParameterInfo::kCanAutomate, unitId
     );
-    parameters.addParameter( delayMixParam );
+    parameters.addParameter( reverbPlaybackRateParam );
 
     // BitCrusher controls
 
@@ -137,22 +151,7 @@ tresult PLUGIN_API FogPadController::initialize( FUnknown* context )
     );
     parameters.addParameter( decimatorParam );
 
-    parameters.addParameter(
-        USTRING( "Decimator chain" ), 0, 1, 0, ParameterInfo::kCanAutomate, kDecimatorChainId, unitId
-    );
-
-    RangeParameter* decimatorLFOParam = new RangeParameter(
-        USTRING( "Decimator rate" ), kLFODecimatorId, USTRING( "%" ),
-        0.f, 1.f, 0.f,
-        0, ParameterInfo::kCanAutomate, unitId
-    );
-    parameters.addParameter( decimatorLFOParam );
-
     // Filter controls
-
-    parameters.addParameter(
-        USTRING( "Filter chain" ), 0, 1, 0, ParameterInfo::kCanAutomate, kFilterChainId, unitId
-    );
 
     RangeParameter* filterCutoffParam = new RangeParameter(
         USTRING( "Filter cutoff" ), kFilterCutoffId, USTRING( "Hz" ),
@@ -182,39 +181,6 @@ tresult PLUGIN_API FogPadController::initialize( FUnknown* context )
     );
     parameters.addParameter( filterLFODepthParam );
 
-    // Flanger controls
-
-    RangeParameter* flangerLFORateParam = new RangeParameter(
-        USTRING( "Flanger LFO rate" ), kFlangerRateId, USTRING( "Hz" ),
-        0.f, 10.f, 0.f,
-        0, ParameterInfo::kCanAutomate, unitId
-    );
-    parameters.addParameter( flangerLFORateParam );
-
-    RangeParameter* flangerWidthParam = new RangeParameter(
-        USTRING( "Flanger width" ), kFlangerWidthId, USTRING( "%" ),
-        0.f, 1.f, 0.f,
-        0, ParameterInfo::kCanAutomate, unitId
-    );
-    parameters.addParameter( flangerWidthParam );
-
-    RangeParameter* flangerFeedbackParam = new RangeParameter(
-        USTRING( "Flanger feedback" ), kFlangerFeedbackId, USTRING( "%" ),
-        0.f, 1.f, 0.f,
-        0, ParameterInfo::kCanAutomate, unitId
-     );
-    parameters.addParameter( flangerFeedbackParam );
-
-    RangeParameter* flangerDelayParam = new RangeParameter(
-        USTRING( "Flanger delay" ), kFlangerDelayId, USTRING( "%" ),
-        0.1f, 1.f, 0.1f,
-        0, ParameterInfo::kCanAutomate, unitId
-    );
-    parameters.addParameter( flangerDelayParam );
-
-    parameters.addParameter(
-        USTRING( "Flanger chain" ), 0, 1, 0, ParameterInfo::kCanAutomate, kFlangerChainId, unitId
-    );
     // initialization
 
     String str( "FOGPAD" );
@@ -235,20 +201,28 @@ tresult PLUGIN_API FogPadController::setComponentState( IBStream* state )
     // we receive the current state of the component (processor part)
     if ( state )
     {
-        float savedDelayTime = 1.f;
-        if ( state->read( &savedDelayTime, sizeof( float )) != kResultOk )
+        float savedReverbSize = 1.f;
+        if ( state->read( &savedReverbSize, sizeof( float )) != kResultOk )
             return kResultFalse;
 
-        float savedDelayHostSync = 1.f;
-        if ( state->read( &savedDelayHostSync, sizeof( float )) != kResultOk )
+        float savedReverbWidth = 1.f;
+        if ( state->read( &savedReverbWidth, sizeof( float )) != kResultOk )
             return kResultFalse;
 
-        float savedDelayFeedback = 1.f;
-        if ( state->read( &savedDelayFeedback, sizeof( float )) != kResultOk )
+        float savedReverbDryMix = 1.f;
+        if ( state->read( &savedReverbDryMix, sizeof( float )) != kResultOk )
             return kResultFalse;
 
-        float savedDelayMix = 1.f;
-        if ( state->read( &savedDelayMix, sizeof( float )) != kResultOk )
+        float savedReverbWetMix = 1.f;
+        if ( state->read( &savedReverbWetMix, sizeof( float )) != kResultOk )
+            return kResultFalse;
+
+        float savedReverbFreeze = 1.f;
+        if ( state->read( &savedReverbFreeze, sizeof( float )) != kResultOk )
+            return kResultFalse;
+
+        float savedReverbPlaybackRate = 1.f;
+        if ( state->read( &savedReverbPlaybackRate, sizeof( float )) != kResultOk )
             return kResultFalse;
 
         float savedBitResolution = 1.f;
@@ -271,18 +245,6 @@ tresult PLUGIN_API FogPadController::setComponentState( IBStream* state )
         if ( state->read( &savedDecimator, sizeof( float )) != kResultOk )
             return kResultFalse;
 
-        float savedDecimatorChain = 0;
-        if ( state->read( &savedDecimatorChain, sizeof( float )) != kResultOk )
-            return kResultFalse;
-
-        float savedLFODecimator = 0.f;
-        if ( state->read( &savedLFODecimator, sizeof( float )) != kResultOk )
-            return kResultFalse;
-
-        float savedFilterChain = 0.f;
-        if ( state->read( &savedFilterChain, sizeof( float )) != kResultOk )
-            return kResultFalse;
-
         float savedFilterCutoff = Igorski::VST::FILTER_MAX_FREQ;
         if ( state->read( &savedFilterCutoff, sizeof( float )) != kResultOk )
             return kResultFalse;
@@ -299,70 +261,39 @@ tresult PLUGIN_API FogPadController::setComponentState( IBStream* state )
         if ( state->read( &savedLFOFilterDepth, sizeof( float )) != kResultOk )
             return kResultFalse;
 
-        float savedFlangerChain = 0.f;
-        if ( state->read( &savedFlangerChain, sizeof( float )) != kResultOk )
-            return kResultFalse;
-
-        float savedFlangerRate = 1.f;
-        if ( state->read( &savedFlangerRate, sizeof( float )) != kResultOk )
-            return kResultFalse;
-
-        float savedFlangerWidth = 1.f;
-        if ( state->read( &savedFlangerWidth, sizeof( float )) != kResultOk )
-            return kResultFalse;
-
-        float savedFlangerFeedback = 1.f;
-        if ( state->read( &savedFlangerFeedback, sizeof( float )) != kResultOk )
-            return kResultFalse;
-
-        float savedFlangerDelay = 1.f;
-        if ( state->read( &savedFlangerDelay, sizeof( float )) != kResultOk )
-            return kResultFalse;
-
 #if BYTEORDER == kBigEndian
-    SWAP_32( savedDelayTime )
-    SWAP_32( savedDelayHostSync )
-    SWAP_32( savedDelayFeedback )
-    SWAP_32( savedDelayMix )
-    SWAP_32( savedBitResolution )
-    SWAP_32( savedBitResolutionChain )
-    SWAP_32( savedLFOBitResolution )
-    SWAP_32( savedLFOBitResolutionDepth )
-    SWAP_32( savedDecimator )
-    SWAP_32( savedDecimatorChain )
-    SWAP_32( savedLFODecimator )
-    SWAP_32( savedFilterChain )
-    SWAP_32( savedFilterCutoff )
-    SWAP_32( savedFilterResonance )
-    SWAP_32( savedLFOFilter )
-    SWAP_32( savedLFOFilterDepth )
-    SWAP_32( savedFlangerChain )
-    SWAP_32( savedFlangerRate )
-    SWAP_32( savedFlangerWidth )
-    SWAP_32( savedFlangerFeedback )
-    SWAP_32( savedFlangerDelay )
+    SWAP32( savedReverbSize );
+    SWAP32( savedReverbWidth );
+    SWAP32( savedReverbDryMix );
+    SWAP32( savedReverbWetMix );
+    SWAP32( savedReverbFreeze );
+    SWAP32( savedReverbPlaybackRate );
+    SWAP32( savedBitResolution );
+    SWAP32( savedBitResolutionChain );
+    SWAP32( savedLFOBitResolution );
+    SWAP32( savedLFOBitResolutionDepth );
+    SWAP32( savedDecimator );
+    SWAP32( savedFilterCutoff );
+    SWAP32( savedFilterResonance );
+    SWAP32( savedLFOFilter );
+    SWAP32( savedLFOFilterDepth );
 #endif
-        setParamNormalized( kDelayTimeId,             savedDelayTime );
-        setParamNormalized( kDelayHostSyncId,         savedDelayHostSync );
-        setParamNormalized( kDelayFeedbackId,         savedDelayFeedback );
-        setParamNormalized( kDelayMixId,              savedDelayMix );
-        setParamNormalized( kBitResolutionId,         savedBitResolution );
-        setParamNormalized( kBitResolutionChainId,    savedBitResolutionChain );
-        setParamNormalized( kLFOBitResolutionId,      savedLFOBitResolution );
-        setParamNormalized( kLFOBitResolutionDepthId, savedLFOBitResolutionDepth );
-        setParamNormalized( kDecimatorId,             savedDecimator );
-        setParamNormalized( kDecimatorChainId,        savedDecimatorChain );
-        setParamNormalized( kLFODecimatorId,          savedLFODecimator );
-        setParamNormalized( kFilterChainId,           savedFilterChain );
-        setParamNormalized( kFilterCutoffId,          savedFilterCutoff );
-        setParamNormalized( kFilterResonanceId,       savedFilterResonance );
-        setParamNormalized( kLFOFilterId,             savedLFOFilter );
-        setParamNormalized( kLFOFilterDepthId,        savedLFOFilterDepth );
-        setParamNormalized( kFlangerChainId,          savedFlangerChain );
-        setParamNormalized( kFlangerRateId,           savedFlangerRate );
-        setParamNormalized( kFlangerWidthId,          savedFlangerWidth );
-        setParamNormalized( kFlangerFeedbackId,       savedFlangerFeedback );
-        setParamNormalized( kFlangerDelayId,          savedFlangerDelay );
+
+        setParamNormalized( kReverbSizeId,              savedReverbSize );
+        setParamNormalized( kReverbWidthId,             savedReverbWidth );
+        setParamNormalized( kReverbDryMixId,            savedReverbDryMix );
+        setParamNormalized( kReverbWetMixId,            savedReverbWetMix );
+        setParamNormalized( kReverbFreezeId,            savedReverbFreeze );
+        setParamNormalized( kReverbPlaybackRateId,      savedReverbPlaybackRate );
+        setParamNormalized( kBitResolutionId,           savedBitResolution );
+        setParamNormalized( kBitResolutionChainId,      savedBitResolutionChain );
+        setParamNormalized( kLFOBitResolutionId,        savedLFOBitResolution );
+        setParamNormalized( kLFOBitResolutionDepthId,   savedLFOBitResolutionDepth );
+        setParamNormalized( kDecimatorId,               savedDecimator );
+        setParamNormalized( kFilterCutoffId,            savedFilterCutoff );
+        setParamNormalized( kFilterResonanceId,         savedFilterResonance );
+        setParamNormalized( kLFOFilterId,               savedLFOFilter );
+        setParamNormalized( kLFOFilterDepthId,          savedLFOFilterDepth );
 
         state->seek( sizeof ( float ), IBStream::kIBSeekCur );
     }
@@ -464,30 +395,25 @@ tresult PLUGIN_API FogPadController::getParamStringByValue( ParamID tag, ParamVa
         // these controls are floating point values in 0 - 1 range, we can
         // simply read the normalized value which is in the same range
 
-        case kDelayTimeId:
-        case kDelayHostSyncId:
-        case kDelayFeedbackId:
-        case kDelayMixId:
+        case kReverbSizeId:
+        case kReverbWidthId:
+        case kReverbDryMixId:
+        case kReverbWetMixId:
+        case kReverbFreezeId:
+        case kReverbPlaybackRateId:
         case kBitResolutionId:
         case kBitResolutionChainId:
         case kLFOBitResolutionDepthId:
         case kDecimatorId:
-        case kDecimatorChainId:
-        case kLFODecimatorId:
-        case kFilterChainId:
         case kLFOFilterDepthId:
-        case kFlangerChainId:
-        case kFlangerWidthId:
-        case kFlangerFeedbackId:
-        case kFlangerDelayId:
         {
             char text[32];
 
-            if (( tag == kDelayHostSyncId )) {
+            if (( tag == kReverbFreezeId )) {
                 sprintf( text, "%s", ( valueNormalized == 0 ) ? "Off" : "On" );
             }
-            else if (( tag == kBitResolutionChainId || tag == kDecimatorChainId || tag == kFilterChainId )) {
-                sprintf( text, "%s", ( valueNormalized == 0 ) ? "Pre-delay mix" : "Post-delay mix" );
+            else if ( tag == kBitResolutionChainId ) {
+                sprintf( text, "%s", ( valueNormalized == 0 ) ? "Pre-reverb mix" : "Post-reverb mix" );
             }
             else {
                 sprintf( text, "%.2f", ( float ) valueNormalized );
@@ -504,10 +430,9 @@ tresult PLUGIN_API FogPadController::getParamStringByValue( ParamID tag, ParamVa
         case kFilterCutoffId:
         case kFilterResonanceId:
         case kLFOFilterId:
-        case kFlangerRateId:
         {
             char text[32];
-            if (( tag == kLFOBitResolutionId || tag == kLFODecimatorId ) && valueNormalized == 0 )
+            if (( tag == kLFOBitResolutionId ) && valueNormalized == 0 )
                 sprintf( text, "%s", "Off" );
             else
                 sprintf( text, "%.2f", normalizedParamToPlain( tag, valueNormalized ));

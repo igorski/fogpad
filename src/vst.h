@@ -86,10 +86,12 @@ class FogPad : public AudioEffect
         // our model values, these are all 0 - 1 range
         // (normalized) RangeParameter values
 
-        float fDelayTime;
-        float fDelayHostSync;
-        float fDelayFeedback;
-        float fDelayMix;
+        float fReverbSize;
+        float fReverbWidth;
+        float fReverbDryMix;
+        float fReverbWetMix;
+        float fReverbFreeze;
+        float fReverbPlaybackRate;
 
         float fBitResolution;
         float fBitResolutionChain;
@@ -97,10 +99,7 @@ class FogPad : public AudioEffect
         float fLFOBitResolutionDepth;
 
         float fDecimator;
-        float fDecimatorChain;
-        float fLFODecimator;
 
-        float fFilterChain;
         float fFilterCutoff;
         float fFilterResonance;
         float fLFOFilter;

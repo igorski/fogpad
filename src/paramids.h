@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2018 Igor Zinken - https://www.igorski.nl
+ * Copyright (c) 2018-2019 Igor Zinken - https://www.igorski.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -27,10 +27,12 @@ enum
 {
     // ids for all visual controls
 
-    kDelayTimeId = 0,         // delay time
-    kDelayHostSyncId,         // delay host sync
-    kDelayFeedbackId,         // delay feedback
-    kDelayMixId,              // delay mix
+    kReverbSizeId = 0,        // reverb size
+    kReverbWidthId,           // reverb width
+    kReverbDryMixId,          // reverb wet mix
+    kReverbWetMixId,          // reverb dry mix
+    kReverbFreezeId,          // reverb freeze
+    kReverbPlaybackRateId,    // reverb playback rate
 
     kBitResolutionId,         // bit resolution
     kBitResolutionChainId,    // bit resolution pre/post delay mix
@@ -38,20 +40,11 @@ enum
     kLFOBitResolutionDepthId, // depth for bit resolution LFO
 
     kDecimatorId,             // decimator
-    kDecimatorChainId,        // decimator pre/post delay mix
-    kLFODecimatorId,          // decimator LFO rate
 
-    kFilterChainId,           // filter pre/post delay mix
     kFilterCutoffId,          // filter cutoff
     kFilterResonanceId,       // filter resonance
     kLFOFilterId,             // filter LFO rate
     kLFOFilterDepthId,        // depth for filter LFO
-
-    kFlangerChainId,          // flanger pre/post delay mix
-    kFlangerRateId,           // flanger LFO rate
-    kFlangerWidthId,          // flanger width
-    kFlangerFeedbackId,       // flanger feedback
-    kFlangerDelayId,          // flanger delay
 
     kVuPPMId                  // for the Vu value return to host
 };
