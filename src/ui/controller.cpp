@@ -262,21 +262,21 @@ tresult PLUGIN_API FogPadController::setComponentState( IBStream* state )
             return kResultFalse;
 
 #if BYTEORDER == kBigEndian
-    SWAP32( savedReverbSize );
-    SWAP32( savedReverbWidth );
-    SWAP32( savedReverbDryMix );
-    SWAP32( savedReverbWetMix );
-    SWAP32( savedReverbFreeze );
-    SWAP32( savedReverbPlaybackRate );
-    SWAP32( savedBitResolution );
-    SWAP32( savedBitResolutionChain );
-    SWAP32( savedLFOBitResolution );
-    SWAP32( savedLFOBitResolutionDepth );
-    SWAP32( savedDecimator );
-    SWAP32( savedFilterCutoff );
-    SWAP32( savedFilterResonance );
-    SWAP32( savedLFOFilter );
-    SWAP32( savedLFOFilterDepth );
+    SWAP32( savedReverbSize )
+    SWAP32( savedReverbWidth )
+    SWAP32( savedReverbDryMix )
+    SWAP32( savedReverbWetMix )
+    SWAP32( savedReverbFreeze )
+    SWAP32( savedReverbPlaybackRate )
+    SWAP32( savedBitResolution )
+    SWAP32( savedBitResolutionChain )
+    SWAP32( savedLFOBitResolution )
+    SWAP32( savedLFOBitResolutionDepth )
+    SWAP32( savedDecimator )
+    SWAP32( savedFilterCutoff )
+    SWAP32( savedFilterResonance )
+    SWAP32( savedLFOFilter )
+    SWAP32( savedLFOFilterDepth )
 #endif
 
         setParamNormalized( kReverbSizeId,              savedReverbSize );

@@ -75,7 +75,7 @@ BEGIN_FACTORY_DEF( "igorski.nl",
     DEF_CLASS2( INLINE_UID_FROM_FUID( Igorski::VST::FogPadControllerUID ),
                 PClassInfo::kManyInstances,   // cardinality
                 kVstComponentControllerClass, // the Controller category (do not change this)
-                "IgorskiVSTController",       // controller name (could be the same as component name)
+                Igorski::VST::NAME,           // controller name (could be the same as component name)
                 0, "",                        // neither of these are used here
                 FULL_VERSION_STR,             // Plug-in version
                 kVstVersionString,            // the VST 3 SDK version (do not change this)
