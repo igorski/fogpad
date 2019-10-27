@@ -42,14 +42,14 @@ class FogPadUIMessageController : public VSTGUI::IController, public VSTGUI::IVi
             kSendMessageTag = 1000
         };
 
-        FogPadUIMessageController( ControllerType* FogPadController ) : FogPadController( FogPadController ), textEdit( nullptr )
+        FogPadUIMessageController( ControllerType* fogPadController ) : fogPadController( fogPadController ), textEdit( nullptr )
         {
         }
 
         ~FogPadUIMessageController()
         {
             viewWillDelete( textEdit );
-            FogPadController->removeUIMessageController( this );
+            fogPadController->removeUIMessageController( this );
         }
 
         void setMessageText( String128 msgText )
@@ -77,12 +77,12 @@ class FogPadUIMessageController : public VSTGUI::IController, public VSTGUI::IVi
             {
                 if ( pControl->getValueNormalized () > 0.5f )
                 {
-                    FogPadController->sendTextMessage( textEdit->getText ().data() );
+                    fogPadController->sendTextMessage( textEdit->getText ().data() );
                     pControl->setValue( 0.f );
                     pControl->invalid();
 
                     //---send a binary message
-                    if ( IPtr<IMessage> message = owned( FogPadController->allocateMessage()))
+                    if ( IPtr<IMessage> message = owned( fogPadController->allocateMessage()))
                     {
                         message->setMessageID ("BinaryMessage");
                         uint32 size = 100;
@@ -92,7 +92,7 @@ class FogPadUIMessageController : public VSTGUI::IController, public VSTGUI::IVi
                         for ( uint32 i = 0; i < size; i++ )
                             data[ i ] = i;
                         message->getAttributes ()->setBinary( "MyData", data, size );
-                        FogPadController->sendMessage( message );
+                        fogPadController->sendMessage( message );
                     }
                 }
             }
@@ -111,7 +111,7 @@ class FogPadUIMessageController : public VSTGUI::IController, public VSTGUI::IVi
                 textEdit->registerViewListener (this);
 
                 // initialize it content
-                String str( FogPadController->getDefaultMessageText());
+                String str( fogPadController->getDefaultMessageText());
                 str.toMultiByte (kCP_Utf8);
                 textEdit->setText (str.text8 ());
             }
@@ -138,10 +138,10 @@ class FogPadUIMessageController : public VSTGUI::IController, public VSTGUI::IVi
                 String str;
                 str.fromUTF8 (text.data ());
                 str.copyTo (messageText, 128);
-                FogPadController->setDefaultMessageText (messageText);
+                fogPadController->setDefaultMessageText (messageText);
             }
         }
-        ControllerType* FogPadController;
+        ControllerType* fogPadController;
         CTextEdit* textEdit;
 };
 

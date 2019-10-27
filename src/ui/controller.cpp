@@ -76,110 +76,97 @@ tresult PLUGIN_API FogPadController::initialize( FUnknown* context )
 
     // Reverb controls
 
-    RangeParameter* reverbSizeParam = new RangeParameter(
+    parameters.addParameter( new RangeParameter(
         USTRING( "Reverb size" ), kReverbSizeId, USTRING( "0 - 1" ),
         0.f, 1.f, 0.f,
         0, ParameterInfo::kCanAutomate, unitId
-    );
-    parameters.addParameter( reverbSizeParam );
+    ));
 
-    RangeParameter* reverbWidthParam = new RangeParameter(
+    parameters.addParameter( new RangeParameter(
         USTRING( "Reverb width" ), kReverbWidthId, USTRING( "0 - 1" ),
         0.f, 1.f, 0.f,
         0, ParameterInfo::kCanAutomate, unitId
-    );
-    parameters.addParameter( reverbWidthParam );
+    ));
 
-    RangeParameter* reverbDryMixParam = new RangeParameter(
+    parameters.addParameter( new RangeParameter(
         USTRING( "Reverb dry mix" ), kReverbDryMixId, USTRING( "0 - 1" ),
         0.f, 1.f, 0.f,
         0, ParameterInfo::kCanAutomate, unitId
-    );
-    parameters.addParameter( reverbDryMixParam );
+    ));
 
-    RangeParameter* reverbWetMixParam = new RangeParameter(
+    parameters.addParameter( new RangeParameter(
         USTRING( "Reverb wet mix" ), kReverbWetMixId, USTRING( "0 - 1" ),
         0.f, 1.f, 0.f,
         0, ParameterInfo::kCanAutomate, unitId
-    );
-    parameters.addParameter( reverbWetMixParam );
+    ));
 
     parameters.addParameter(
         USTRING( "Reverb feeze mode" ), 0, 1, 0, ParameterInfo::kCanAutomate, kReverbFreezeId, unitId
     );
 
-    RangeParameter* reverbPlaybackRateParam = new RangeParameter(
+    parameters.addParameter( new RangeParameter(
         USTRING( "Reverb playback rate" ), kReverbPlaybackRateId, USTRING( "0 - 1" ),
         0.f, 1.f, 0.f,
         0, ParameterInfo::kCanAutomate, unitId
-    );
-    parameters.addParameter( reverbPlaybackRateParam );
+    ));
 
     // BitCrusher controls
 
-    RangeParameter* bitParam = new RangeParameter(
+    parameters.addParameter( new RangeParameter(
         USTRING( "Bit resolution" ), kBitResolutionId, USTRING( "0 - 16" ),
         16, 0, 16,
         0, ParameterInfo::kCanAutomate, unitId
-    );
-    parameters.addParameter( bitParam );
+    ));
 
     parameters.addParameter(
         USTRING( "BitCrusher chain" ), 0, 1, 0, ParameterInfo::kCanAutomate, kBitResolutionChainId, unitId
     );
 
-    RangeParameter* bitLfoRateParam = new RangeParameter(
+    parameters.addParameter( new RangeParameter(
         USTRING( "Bit LFO rate" ), kLFOBitResolutionId, USTRING( "Hz" ),
         Igorski::VST::MIN_LFO_RATE(), Igorski::VST::MAX_LFO_RATE(), Igorski::VST::MIN_LFO_RATE(),
         0, ParameterInfo::kCanAutomate, unitId
-    );
-    parameters.addParameter( bitLfoRateParam );
+    ));
 
-    RangeParameter* bitLfoDepthParam = new RangeParameter(
+    parameters.addParameter( new RangeParameter(
         USTRING( "Bit LFO depth" ), kLFOBitResolutionDepthId, USTRING( "%" ),
         0.f, 1.f, 0.f,
         0, ParameterInfo::kCanAutomate, unitId
-    );
-    parameters.addParameter( bitLfoDepthParam );
+    ));
 
     // Decimator controls
 
-    RangeParameter* decimatorParam = new RangeParameter(
+    parameters.addParameter( new RangeParameter(
         USTRING( "Decimator resolution" ), kDecimatorId, USTRING( "1 - 32" ),
         0.f, 1.f, 0.f,
         0, ParameterInfo::kCanAutomate, unitId
-    );
-    parameters.addParameter( decimatorParam );
+    ));
 
     // Filter controls
 
-    RangeParameter* filterCutoffParam = new RangeParameter(
+    parameters.addParameter( new RangeParameter(
         USTRING( "Filter cutoff" ), kFilterCutoffId, USTRING( "Hz" ),
         Igorski::VST::FILTER_MIN_FREQ, Igorski::VST::FILTER_MAX_FREQ, Igorski::VST::FILTER_MIN_FREQ,
         0, ParameterInfo::kCanAutomate, unitId
-    );
-    parameters.addParameter( filterCutoffParam );
+    ));
 
-    RangeParameter* filterResonanceParam = new RangeParameter(
+    parameters.addParameter( new RangeParameter(
         USTRING( "Filter resonance" ), kFilterResonanceId, USTRING( "dB" ),
          Igorski::VST::FILTER_MIN_RESONANCE, Igorski::VST::FILTER_MAX_RESONANCE, Igorski::VST::FILTER_MIN_RESONANCE,
         0, ParameterInfo::kCanAutomate, unitId
-     );
-    parameters.addParameter( filterResonanceParam );
+    ));
 
-    RangeParameter* filterLFORateParam = new RangeParameter(
+    parameters.addParameter( new RangeParameter(
         USTRING( "Filter LFO rate" ), kLFOFilterId, USTRING( "Hz" ),
         Igorski::VST::MIN_LFO_RATE(), Igorski::VST::MAX_LFO_RATE(), Igorski::VST::MIN_LFO_RATE(),
         0, ParameterInfo::kCanAutomate, unitId
-    );
-    parameters.addParameter( filterLFORateParam );
+    ));
 
-    RangeParameter* filterLFODepthParam = new RangeParameter(
+    parameters.addParameter( new RangeParameter(
         USTRING( "Filter LFO depth" ), kLFOFilterDepthId, USTRING( "%" ),
         0.f, 1.f, 0.f,
         0, ParameterInfo::kCanAutomate, unitId
-    );
-    parameters.addParameter( filterLFODepthParam );
+    ));
 
     // initialization
 
