@@ -615,8 +615,11 @@ void FogPad::syncModel()
 
     reverbProcess->bitCrusher->setAmount( fBitResolution );
     reverbProcess->bitCrusher->setLFO( fLFOBitResolution, fLFOBitResolutionDepth );
-    reverbProcess->decimator->setBits( ( int )( fDecimator * 32.f ));
-    //reverbProcess->decimator->setRate( fLFODecimator );
+
+    int decimation = ( int )( fDecimator * 32.f );
+    reverbProcess->decimator->setBits( decimation );
+    reverbProcess->decimator->setRate( fDecimator );
+
     reverbProcess->filter->updateProperties( fFilterCutoff, fFilterResonance, fLFOFilter, fLFOFilterDepth );
 }
 
