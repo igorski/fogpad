@@ -27,24 +27,25 @@ enum
 {
     // ids for all visual controls
 
-    kReverbSizeId = 0,        // reverb size
+    kReverbSizeId = 1,        // reverb size
     kReverbWidthId,           // reverb width
-    kReverbDryMixId,          // reverb wet mix
-    kReverbWetMixId,          // reverb dry mix
-    kReverbFreezeId,          // reverb freeze
-    kReverbPlaybackRateId,    // reverb playback rate
-
-    kBitResolutionId,         // bit resolution
-    kBitResolutionChainId,    // bit resolution pre/post delay mix
-    kLFOBitResolutionId,      // bit resolution LFO rate
-    kLFOBitResolutionDepthId, // depth for bit resolution LFO
-
-    kDecimatorId,             // decimator
 
     kFilterCutoffId,          // filter cutoff
     kFilterResonanceId,       // filter resonance
     kLFOFilterId,             // filter LFO rate
     kLFOFilterDepthId,        // depth for filter LFO
+
+    kReverbPlaybackRateId,    // reverb playback rate
+    kDecimatorId,             // decimator
+
+    kBitResolutionId,         // bit resolution
+    kLFOBitResolutionId,      // bit resolution LFO rate
+    kLFOBitResolutionDepthId, // depth for bit resolution LFO
+    kBitResolutionChainId,    // bit resolution pre/post delay mix
+
+    kReverbFreezeId,          // reverb freeze
+    kReverbDryMixId,          // reverb wet mix
+    kReverbWetMixId,          // reverb dry mix
 
     kVuPPMId                  // for the Vu value return to host
 };

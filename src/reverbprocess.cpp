@@ -151,7 +151,13 @@ float ReverbProcess::getPlaybackRate()
 
 void ReverbProcess::setPlaybackRate( float value )
 {
-    _playbackRate = MIN_PLAYBACK_RATE + Calc::scale(value, 1.0f, 1.0f );
+    // "snap" to neutral setting when roughly halfway
+    if ( value >= .48f && value <= .52f ) {
+        _playbackRate = 1.0f;
+    }
+     else {
+        _playbackRate = MIN_PLAYBACK_RATE + Calc::scale(value, 1.0f, 1.0f );
+    }
 }
 
 float ReverbProcess::getMode()

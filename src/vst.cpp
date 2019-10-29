@@ -47,11 +47,11 @@ FogPad::FogPad()
 , fReverbWetMix( 5.f )
 , fReverbFreeze( 0.f )
 , fReverbPlaybackRate( 0.5f )
-, fBitResolution( 1.f )
+, fBitResolution( 0.f )
 , fBitResolutionChain( 0.f )
 , fLFOBitResolution( .0f )
-, fLFOBitResolutionDepth( .75f )
-, fDecimator( 1.f )
+, fLFOBitResolutionDepth( .5f )
+, fDecimator( 0.f )
 , fFilterCutoff( .5f )
 , fFilterResonance( 1.f )
 , fLFOFilter( 0.f )
@@ -616,9 +616,11 @@ void FogPad::syncModel()
     reverbProcess->bitCrusher->setAmount( fBitResolution );
     reverbProcess->bitCrusher->setLFO( fLFOBitResolution, fLFOBitResolutionDepth );
 
-    int decimation = ( int )( fDecimator * 32.f );
+    // invert the decimator range 0 == max bits (no distortion), 1 == min bits (severely distorted)
+    float scaledDecimator = abs( fDecimator - 1.0f );
+    int decimation = ( int )( scaledDecimator * 32.f );
     reverbProcess->decimator->setBits( decimation );
-    reverbProcess->decimator->setRate( fDecimator );
+    reverbProcess->decimator->setRate( scaledDecimator );
 
     reverbProcess->filter->updateProperties( fFilterCutoff, fFilterResonance, fLFOFilter, fLFOFilterDepth );
 }

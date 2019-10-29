@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2013-2018 Igor Zinken - https://www.igorski.nl
+ * Copyright (c) 2013-2019 Igor Zinken - https://www.igorski.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -108,9 +108,12 @@ void BitCrusher::process( float* inBuffer, int bufferSize )
 
 void BitCrusher::setAmount( float value )
 {
+    // invert the range 0 == max bits (no distortion), 1 == min bits (severely distorted)
+    float scaledValue = abs(value - 1.f);
+
     float tempRatio = _tempAmount / std::max( 0.000000001f, _amount );
 
-    _amount = value;
+    _amount = scaledValue;
 
     // in case BitCrusher is attached to oscillator, keep relative offset
     // of currently moving bit resolution in place

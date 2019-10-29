@@ -6,154 +6,172 @@
         <color name="Focus" rgba="#279bffff"/>
     </colors>
     <template
-        maxSize="933, 501" minSize="933, 501" size="933, 501" name="view" opacity="1" origin="0, 0"
+        maxSize="930, 500" minSize="930, 500" size="930, 500" name="view" opacity="1" origin="0, 0"
         background-color="~ BlackCColor" background-color-draw-style="filled and stroked" bitmap="background"
-        class="CViewContainer"  mouse-enabled="true"  transparent="false">
+        class="CViewContainer" mouse-enabled="true" transparent="false">
 
-        <!-- Reverb module -->
+        <!-- MIST -->
         <!-- size slider -->
-        <view control-tag="Unit1::ReverbSize" origin="155, 159" size="134, 21" class="CSlider"
-            background-offset="0, 0" bitmap="slider_background"
-            bitmap-offset="0, 0" default-value="0.5" draw-back="false" draw-back-color="~ WhiteCColor" draw-frame="false"
-            draw-frame-color="~ WhiteCColor" draw-value="false" draw-value-color="~ WhiteCColor" draw-value-from-center="false"
-            draw-value-inverted="false" handle-bitmap="slider_handle" handle-offset="0, 0" max-value="1" min-value="0"
-            mode="free click" mouse-enabled="true" opacity="1" orientation="horizontal" reverse-orientation="false"
-            transparent="true" transparent-handle="true" wheel-inc-value="0.1" zoom-factor="10" />
-
-        <!-- width slider -->
-        <view control-tag="Unit1::ReverbWidth" origin="155, 159" size="134, 21" class="CSlider"
-            background-offset="0, 0" bitmap="slider_background"
-            bitmap-offset="0, 0" default-value="0.5" draw-back="false" draw-back-color="~ WhiteCColor" draw-frame="false"
-            draw-frame-color="~ WhiteCColor" draw-value="false" draw-value-color="~ WhiteCColor" draw-value-from-center="false"
-            draw-value-inverted="false" handle-bitmap="slider_handle" handle-offset="0, 0" max-value="1" min-value="0"
-            mode="free click" mouse-enabled="true" opacity="1" orientation="horizontal" reverse-orientation="false"
-            transparent="true" transparent-handle="true" wheel-inc-value="0.1" zoom-factor="10" />
-
-        <!-- dry mix slider -->
-        <view control-tag="Unit1::ReverbDryMix" origin="155, 159" size="134, 21" class="CSlider"
-            background-offset="0, 0" bitmap="slider_background"
-            bitmap-offset="0, 0" default-value="0.5" draw-back="false" draw-back-color="~ WhiteCColor" draw-frame="false"
-            draw-frame-color="~ WhiteCColor" draw-value="false" draw-value-color="~ WhiteCColor" draw-value-from-center="false"
-            draw-value-inverted="false" handle-bitmap="slider_handle" handle-offset="0, 0" max-value="1" min-value="0"
-            mode="free click" mouse-enabled="true" opacity="1" orientation="horizontal" reverse-orientation="false"
-            transparent="true" transparent-handle="true" wheel-inc-value="0.1" zoom-factor="10" />
-
-        <!-- wet mix slider -->
-        <view control-tag="Unit1::ReverbWetMix" origin="155, 159" size="134, 21" class="CSlider"
-            background-offset="0, 0" bitmap="slider_background"
-            bitmap-offset="0, 0" default-value="0.5" draw-back="false" draw-back-color="~ WhiteCColor" draw-frame="false"
-            draw-frame-color="~ WhiteCColor" draw-value="false" draw-value-color="~ WhiteCColor" draw-value-from-center="false"
-            draw-value-inverted="false" handle-bitmap="slider_handle" handle-offset="0, 0" max-value="1" min-value="0"
-            mode="free click" mouse-enabled="true" opacity="1" orientation="horizontal" reverse-orientation="false"
-            transparent="true" transparent-handle="true" wheel-inc-value="0.1" zoom-factor="10" />
-
-        <!-- freeze toggle -->
-        <view control-tag="Unit1::ReverbFreeze" origin="154, 182" size="145, 25" autosize-to-fit="false" class="CCheckBox"
-              background-offset="0, 0" boxfill-color="~ GreenCColor"  autosize="bottom"
-              boxframe-color="~ BlackCColor" checkmark-color="~ BlackCColor"
-              default-value="0" draw-crossbox="true" font="~ NormalFontSmall" font-color="Light Grey" frame-width="1"
-              max-value="1" min-value="0" mouse-enabled="true" opacity="1" round-rect-radius="0"
-              title="" transparent="false" wants-focus="true" wheel-inc-value="0.1"/>
-
-          <!-- playback rate slider -->
-          <view control-tag="Unit1::ReverbPlaybackRate" origin="155, 159" size="134, 21" class="CSlider"
-              background-offset="0, 0" bitmap="slider_background"
-              bitmap-offset="0, 0" default-value="0.5" draw-back="false" draw-back-color="~ WhiteCColor" draw-frame="false"
-              draw-frame-color="~ WhiteCColor" draw-value="false" draw-value-color="~ WhiteCColor" draw-value-from-center="false"
-              draw-value-inverted="false" handle-bitmap="slider_handle" handle-offset="0, 0" max-value="1" min-value="0"
-              mode="free click" mouse-enabled="true" opacity="1" orientation="horizontal" reverse-orientation="false"
-              transparent="true" transparent-handle="true" wheel-inc-value="0.1" zoom-factor="10" />
-
-        <!-- BitCrusher module -->
-        <!-- bit resolution slider -->
-        <view control-tag="Unit1::BitResolution" origin="463, 111" size="134, 21" class="CSlider"
-            background-offset="0, 0" bitmap="slider_background"
-            bitmap-offset="0, 0" default-value="0.5" draw-back="false" draw-back-color="~ WhiteCColor" draw-frame="false"
-            draw-frame-color="~ WhiteCColor" draw-value="false" draw-value-color="~ WhiteCColor" draw-value-from-center="false"
-            draw-value-inverted="false" handle-bitmap="slider_handle" handle-offset="0, 0" max-value="1" min-value="0"
-            mode="free click" mouse-enabled="true" opacity="1" orientation="horizontal" reverse-orientation="false"
-            transparent="true" transparent-handle="true" wheel-inc-value="0.1" zoom-factor="10" />
-
-        <!-- LFO rate slider -->
-        <view control-tag="Unit1::LFOBitResolution" origin="463, 135" size="134, 21" class="CSlider"
-            background-offset="0, 0" bitmap="slider_background"
-            bitmap-offset="0, 0" default-value="0" draw-back="false" draw-back-color="~ WhiteCColor" draw-frame="false"
-            draw-frame-color="~ WhiteCColor" draw-value="false" draw-value-color="~ WhiteCColor" draw-value-from-center="false"
-            draw-value-inverted="false" handle-bitmap="slider_handle" handle-offset="0, 0" max-value="10" min-value="0"
-            mode="free click" mouse-enabled="true" opacity="1" orientation="horizontal" reverse-orientation="false"
-            transparent="true" transparent-handle="true" wheel-inc-value="0.1" zoom-factor="10" />
-
-        <!-- LFO depth slider -->
-        <view control-tag="Unit1::LFOBitResolutionDepth" origin="463, 159" size="134, 21" class="CSlider"
-            background-offset="0, 0" bitmap="slider_background"
-            bitmap-offset="0, 0" default-value="0" draw-back="false" draw-back-color="~ WhiteCColor" draw-frame="false"
-            draw-frame-color="~ WhiteCColor" draw-value="false" draw-value-color="~ WhiteCColor" draw-value-from-center="false"
-            draw-value-inverted="false" handle-bitmap="slider_handle" handle-offset="0, 0" max-value="10" min-value="0"
-            mode="free click" mouse-enabled="true" opacity="1" orientation="horizontal" reverse-orientation="false"
-            transparent="true" transparent-handle="true" wheel-inc-value="0.1" zoom-factor="10" />
-
-        <!-- Pre/post delay mix -->
-        <view control-tag="Unit1::BitCrusherChain" origin="462, 182" size="145, 25" autosize-to-fit="false" class="CCheckBox"
-              background-offset="0, 0" boxfill-color="~ GreenCColor"  autosize="bottom"
-              boxframe-color="~ BlackCColor" checkmark-color="~ BlackCColor"
-              default-value="0" draw-crossbox="true" font="~ NormalFontSmall" font-color="Light Grey" frame-width="1"
-              max-value="1" min-value="0" mouse-enabled="true" opacity="1" round-rect-radius="0"
-              title="" transparent="false" wants-focus="true" wheel-inc-value="0.1"/>
-
-
-        <!-- Decimator module -->
-        <!-- bit slider -->
-        <view control-tag="Unit1::Decimator" origin="771, 111" size="134, 21" class="CSlider"
-            background-offset="0, 0" bitmap="slider_background"
-            bitmap-offset="0, 0" default-value="0.5" draw-back="false" draw-back-color="~ WhiteCColor" draw-frame="false"
-            draw-frame-color="~ WhiteCColor" draw-value="false" draw-value-color="~ WhiteCColor" draw-value-from-center="false"
-            draw-value-inverted="false" handle-bitmap="slider_handle" handle-offset="0, 0" max-value="1" min-value="0"
-            mode="free click" mouse-enabled="true" opacity="1" orientation="horizontal" reverse-orientation="false"
-            transparent="true" transparent-handle="true" wheel-inc-value="0.1" zoom-factor="10" />
-
-        <!-- Filter module -->
-        <!-- filter cutoff slider -->
-        <view control-tag="Unit1::FilterCutoff" origin="155, 311" size="134, 21" class="CSlider"
-            background-offset="0, 0" bitmap="slider_background"
-            bitmap-offset="0, 0" default-value="0.5" draw-back="false" draw-back-color="~ WhiteCColor" draw-frame="false"
-            draw-frame-color="~ WhiteCColor" draw-value="false" draw-value-color="~ WhiteCColor" draw-value-from-center="false"
-            draw-value-inverted="false" handle-bitmap="slider_handle" handle-offset="0, 0" max-value="1" min-value="0"
-            mode="free click" mouse-enabled="true" opacity="1" orientation="horizontal" reverse-orientation="false"
-            transparent="true" transparent-handle="true" wheel-inc-value="0.1" zoom-factor="10" />
-
-        <!-- filter resonance slider -->
-        <view control-tag="Unit1::FilterResonance" origin="155, 335" size="134, 21" class="CSlider"
-            background-offset="0, 0" bitmap="slider_background"
-            bitmap-offset="0, 0" default-value="0.5" draw-back="false" draw-back-color="~ WhiteCColor" draw-frame="false"
-            draw-frame-color="~ WhiteCColor" draw-value="false" draw-value-color="~ WhiteCColor" draw-value-from-center="false"
-            draw-value-inverted="false" handle-bitmap="slider_handle" handle-offset="0, 0" max-value="1" min-value="0"
-            mode="free click" mouse-enabled="true" opacity="1" orientation="horizontal" reverse-orientation="false"
-            transparent="true" transparent-handle="true" wheel-inc-value="0.1" zoom-factor="10" />
-
-        <!-- filter LFO speed slider -->
-        <view control-tag="Unit1::LFOFilter" origin="155, 359" size="134, 21" class="CSlider"
-            background-offset="0, 0" bitmap="slider_background"
-            bitmap-offset="0, 0" default-value="0.5" draw-back="false" draw-back-color="~ WhiteCColor" draw-frame="false"
-            draw-frame-color="~ WhiteCColor" draw-value="false" draw-value-color="~ WhiteCColor" draw-value-from-center="false"
-            draw-value-inverted="false" handle-bitmap="slider_handle" handle-offset="0, 0" max-value="1" min-value="0"
-            mode="free click" mouse-enabled="true" opacity="1" orientation="horizontal" reverse-orientation="false"
-            transparent="true" transparent-handle="true" wheel-inc-value="0.1" zoom-factor="10" />
-
-        <!-- filter LFO depth slider -->
-        <view control-tag="Unit1::LFOFilterDepth" origin="155, 383" size="134, 21" class="CSlider"
-            background-offset="0, 0" bitmap="slider_background"
-            bitmap-offset="0, 0" default-value="0.5" draw-back="false" draw-back-color="~ WhiteCColor" draw-frame="false"
-            draw-frame-color="~ WhiteCColor" draw-value="false" draw-value-color="~ WhiteCColor" draw-value-from-center="false"
-            draw-value-inverted="false" handle-bitmap="slider_handle" handle-offset="0, 0" max-value="1" min-value="0"
-            mode="free click" mouse-enabled="true" opacity="1" orientation="horizontal" reverse-orientation="false"
-            transparent="true" transparent-handle="true" wheel-inc-value="0.1" zoom-factor="10" />
-
-        <view control-tag="Test" class="CKnob" angle-range="270" angle-start="135" autosize="right top"
+        <view control-tag="Unit1::ReverbSize" class="CKnob" angle-range="270" angle-start="135" autosize="right top"
               background-offset="0, 0" circle-drawing="true" corona-color="~ WhiteCColor" corona-dash-dot="false"
               corona-drawing="true" corona-from-center="false" corona-inset="5" corona-inverted="false"
               corona-line-cap-butt="false" corona-outline="true" corona-outline-width-add="2" default-value="0.5"
               handle-color="~ WhiteCColor" handle-line-width="5" handle-shadow-color="~ GreyCColor" max-value="1"
-              min-value="0" mouse-enabled="true" opacity="1" origin="200, 230" size="60, 60"
+              min-value="0" mouse-enabled="true" opacity="1" origin="20, 105" size="60, 60"
+              skip-handle-drawing="false" transparent="false" value-inset="5" wants-focus="true"
+              wheel-inc-value="0.1" zoom-factor="1.5"
+        />
+
+        <!-- width slider -->
+        <view control-tag="Unit1::ReverbWidth" class="CKnob" angle-range="270" angle-start="135" autosize="right top"
+              background-offset="0, 0" circle-drawing="true" corona-color="~ WhiteCColor" corona-dash-dot="false"
+              corona-drawing="true" corona-from-center="false" corona-inset="5" corona-inverted="false"
+              corona-line-cap-butt="false" corona-outline="true" corona-outline-width-add="2" default-value="0.5"
+              handle-color="~ WhiteCColor" handle-line-width="5" handle-shadow-color="~ GreyCColor" max-value="1"
+              min-value="0" mouse-enabled="true" opacity="1" origin="110, 105" size="60, 60"
+              skip-handle-drawing="false" transparent="false" value-inset="5" wants-focus="true"
+              wheel-inc-value="0.1" zoom-factor="1.5"
+        />
+
+        <!-- freeze toggle -->
+        <view control-tag="Unit1::ReverbFreeze" class="CCheckBox" origin="224, 124" size="25, 40" autosize-to-fit="false"
+              background-offset="0, 0" boxfill-color="#85bad7"  autosize="bottom"
+              boxframe-color="~ BlackCColor" checkmark-color="~ BlackCColor"
+              default-value="0" draw-crossbox="true" font="~ NormalFontSmall" font-color="Light Grey" frame-width="1"
+              max-value="1" min-value="0" mouse-enabled="true" opacity="1" round-rect-radius="0"
+              title="" transparent="false" wants-focus="true" wheel-inc-value="0.1"
+        />
+
+        <!-- HUE -->
+        <!-- filter cutoff slider -->
+        <view control-tag="Unit1::FilterCutoff" class="CKnob" angle-range="270" angle-start="135" autosize="right top"
+              background-offset="0, 0" circle-drawing="true" corona-color="~ WhiteCColor" corona-dash-dot="false"
+              corona-drawing="true" corona-from-center="false" corona-inset="5" corona-inverted="false"
+              corona-line-cap-butt="false" corona-outline="true" corona-outline-width-add="2" default-value="0.5"
+              handle-color="~ WhiteCColor" handle-line-width="5" handle-shadow-color="~ GreyCColor" max-value="1"
+              min-value="0" mouse-enabled="true" opacity="1" origin="303, 105" size="60, 60"
+              skip-handle-drawing="false" transparent="false" value-inset="5" wants-focus="true"
+              wheel-inc-value="0.1" zoom-factor="1.5"
+        />
+
+        <!-- filter resonance slider -->
+        <!--<view control-tag="Unit1::FilterResonance" class="CKnob" angle-range="270" angle-start="135" autosize="right top"-->
+              <!--background-offset="0, 0" circle-drawing="true" corona-color="~ WhiteCColor" corona-dash-dot="false"-->
+              <!--corona-drawing="true" corona-from-center="false" corona-inset="5" corona-inverted="false"-->
+              <!--corona-line-cap-butt="false" corona-outline="true" corona-outline-width-add="2" default-value="0.5"-->
+              <!--handle-color="~ WhiteCColor" handle-line-width="5" handle-shadow-color="~ GreyCColor" max-value="1"-->
+              <!--min-value="0" mouse-enabled="true" opacity="1" origin="393, 105" size="60, 60"-->
+              <!--skip-handle-drawing="false" transparent="false" value-inset="5" wants-focus="true"-->
+              <!--wheel-inc-value="0.1" zoom-factor="1.5"-->
+        <!--/>-->
+
+        <!-- filter LFO speed slider -->
+        <view control-tag="Unit1::LFOFilter" class="CKnob" angle-range="270" angle-start="135" autosize="right top"
+              background-offset="0, 0" circle-drawing="true" corona-color="~ WhiteCColor" corona-dash-dot="false"
+              corona-drawing="true" corona-from-center="false" corona-inset="5" corona-inverted="false"
+              corona-line-cap-butt="false" corona-outline="true" corona-outline-width-add="2" default-value="0.5"
+              handle-color="~ WhiteCColor" handle-line-width="5" handle-shadow-color="~ GreyCColor" max-value="1"
+              min-value="0" mouse-enabled="true" opacity="1" origin="393, 105" size="60, 60"
+              skip-handle-drawing="false" transparent="false" value-inset="5" wants-focus="true"
+              wheel-inc-value="0.1" zoom-factor="1.5"
+        />
+
+        <!-- filter LFO depth slider -->
+        <view control-tag="Unit1::LFOFilterDepth" class="CKnob" angle-range="270" angle-start="135" autosize="right top"
+              background-offset="0, 0" circle-drawing="true" corona-color="~ WhiteCColor" corona-dash-dot="false"
+              corona-drawing="true" corona-from-center="false" corona-inset="5" corona-inverted="false"
+              corona-line-cap-butt="false" corona-outline="true" corona-outline-width-add="2" default-value="0.5"
+              handle-color="~ WhiteCColor" handle-line-width="5" handle-shadow-color="~ GreyCColor" max-value="1"
+              min-value="0" mouse-enabled="true" opacity="1" origin="483, 105" size="60, 60"
+              skip-handle-drawing="false" transparent="false" value-inset="5" wants-focus="true"
+              wheel-inc-value="0.1" zoom-factor="1.5"
+        />
+
+        <!-- MURK  -->
+        <!-- playback rate slider -->
+        <view control-tag="Unit1::ReverbPlaybackRate" class="CKnob" angle-range="270" angle-start="135" autosize="right top"
+              background-offset="0, 0" circle-drawing="true" corona-color="~ WhiteCColor" corona-dash-dot="false"
+              corona-drawing="true" corona-from-center="false" corona-inset="5" corona-inverted="false"
+              corona-line-cap-butt="false" corona-outline="true" corona-outline-width-add="2" default-value="0.5"
+              handle-color="~ WhiteCColor" handle-line-width="5" handle-shadow-color="~ GreyCColor" max-value="1"
+              min-value="0" mouse-enabled="true" opacity="1" origin="630, 105" size="60, 60"
+              skip-handle-drawing="false" transparent="false" value-inset="5" wants-focus="true"
+              wheel-inc-value="0.1" zoom-factor="1.5"
+        />
+
+        <!-- decimator slider -->
+        <view control-tag="Unit1::Decimator" class="CKnob" angle-range="270" angle-start="135" autosize="right top"
+              background-offset="0, 0" circle-drawing="true" corona-color="~ WhiteCColor" corona-dash-dot="false"
+              corona-drawing="true" corona-from-center="false" corona-inset="5" corona-inverted="false"
+              corona-line-cap-butt="false" corona-outline="true" corona-outline-width-add="2" default-value="0.5"
+              handle-color="~ WhiteCColor" handle-line-width="5" handle-shadow-color="~ GreyCColor" max-value="1"
+              min-value="0" mouse-enabled="true" opacity="1" origin="720, 105" size="60, 60"
+              skip-handle-drawing="false" transparent="false" value-inset="5" wants-focus="true"
+              wheel-inc-value="0.1" zoom-factor="1.5"
+        />
+
+        <!-- BOTHER -->
+        <!-- bit resolution slider -->
+        <view control-tag="Unit1::BitResolution" class="CKnob" angle-range="270" angle-start="135" autosize="right top"
+              background-offset="0, 0" circle-drawing="true" corona-color="~ WhiteCColor" corona-dash-dot="false"
+              corona-drawing="true" corona-from-center="false" corona-inset="5" corona-inverted="false"
+              corona-line-cap-butt="false" corona-outline="true" corona-outline-width-add="2" default-value="0.5"
+              handle-color="~ WhiteCColor" handle-line-width="5" handle-shadow-color="~ GreyCColor" max-value="1"
+              min-value="0" mouse-enabled="true" opacity="1" origin="20, 360" size="60, 60"
+              skip-handle-drawing="false" transparent="false" value-inset="5" wants-focus="true"
+              wheel-inc-value="0.1" zoom-factor="1.5"
+        />
+
+        <!-- LFO rate slider -->
+        <view control-tag="Unit1::LFOBitResolution" class="CKnob" angle-range="270" angle-start="135" autosize="right top"
+              background-offset="0, 0" circle-drawing="true" corona-color="~ WhiteCColor" corona-dash-dot="false"
+              corona-drawing="true" corona-from-center="false" corona-inset="5" corona-inverted="false"
+              corona-line-cap-butt="false" corona-outline="true" corona-outline-width-add="2" default-value="0.5"
+              handle-color="~ WhiteCColor" handle-line-width="5" handle-shadow-color="~ GreyCColor" max-value="1"
+              min-value="0" mouse-enabled="true" opacity="1" origin="110, 360" size="60, 60"
+              skip-handle-drawing="false" transparent="false" value-inset="5" wants-focus="true"
+              wheel-inc-value="0.1" zoom-factor="1.5"
+        />
+
+        <!-- LFO depth slider -->
+        <view control-tag="Unit1::LFOBitResolutionDepth" class="CKnob" angle-range="270" angle-start="135" autosize="right top"
+              background-offset="0, 0" circle-drawing="true" corona-color="~ WhiteCColor" corona-dash-dot="false"
+              corona-drawing="true" corona-from-center="false" corona-inset="5" corona-inverted="false"
+              corona-line-cap-butt="false" corona-outline="true" corona-outline-width-add="2" default-value="0.5"
+              handle-color="~ WhiteCColor" handle-line-width="5" handle-shadow-color="~ GreyCColor" max-value="1"
+              min-value="0" mouse-enabled="true" opacity="1" origin="200, 360" size="60, 60"
+              skip-handle-drawing="false" transparent="false" value-inset="5" wants-focus="true"
+              wheel-inc-value="0.1" zoom-factor="1.5"
+        />
+
+        <!-- Pre/post reverb mix -->
+        <view control-tag="Unit1::BitCrusherChain" class="CCheckBox" origin="380, 286" size="25, 40" autosize-to-fit="false"
+              background-offset="0, 0" boxfill-color="#85bad7"  autosize="bottom"
+              boxframe-color="~ BlackCColor" checkmark-color="~ BlackCColor"
+              default-value="0" draw-crossbox="true" font="~ NormalFontSmall" font-color="Light Grey" frame-width="1"
+              max-value="1" min-value="0" mouse-enabled="true" opacity="1" round-rect-radius="0"
+              title="" transparent="false" wants-focus="true" wheel-inc-value="0.1"
+        />
+
+        <!-- COMMINGLE -->
+        <!-- dry mix slider -->
+        <view control-tag="Unit1::ReverbDryMix" class="CKnob" angle-range="270" angle-start="135" autosize="right top"
+              background-offset="0, 0" circle-drawing="true" corona-color="~ WhiteCColor" corona-dash-dot="false"
+              corona-drawing="true" corona-from-center="false" corona-inset="5" corona-inverted="false"
+              corona-line-cap-butt="false" corona-outline="true" corona-outline-width-add="2" default-value="0.5"
+              handle-color="~ WhiteCColor" handle-line-width="5" handle-shadow-color="~ GreyCColor" max-value="1"
+              min-value="0" mouse-enabled="true" opacity="1" origin="760, 397" size="60, 60"
+              skip-handle-drawing="false" transparent="false" value-inset="5" wants-focus="true"
+              wheel-inc-value="0.1" zoom-factor="1.5"
+        />
+
+        <!-- wet mix slider -->
+        <view control-tag="Unit1::ReverbWetMix" class="CKnob" angle-range="270" angle-start="135" autosize="right top"
+              background-offset="0, 0" circle-drawing="true" corona-color="~ WhiteCColor" corona-dash-dot="false"
+              corona-drawing="true" corona-from-center="false" corona-inset="5" corona-inverted="false"
+              corona-line-cap-butt="false" corona-outline="true" corona-outline-width-add="2" default-value="0.5"
+              handle-color="~ WhiteCColor" handle-line-width="5" handle-shadow-color="~ GreyCColor" max-value="1"
+              min-value="0" mouse-enabled="true" opacity="1" origin="850, 397" size="60, 60"
               skip-handle-drawing="false" transparent="false" value-inset="5" wants-focus="true"
               wheel-inc-value="0.1" zoom-factor="1.5"
         />
@@ -183,29 +201,26 @@
     </custom>
     <bitmaps>
         <bitmap name="background" path="background.png"/>
-        <bitmap name="slider_background" path="slider_background.png"/>
-        <bitmap name="slider_handle" path="slider_handle.png"/>
-        <bitmap name="slider_handle#2x" path="slider_handle_2.0x.png" scale-factor="2"/>
     </bitmaps>
 
     <!-- map the controllers listed above to their paramids by tag index -->
 
     <control-tags>
         <control-tag name="UI::SendMessage"              tag="1000" />
-        <control-tag name="Unit1::ReverbSize"            tag="0" />
-        <control-tag name="Unit1::ReverbWidth"           tag="1" />
-        <control-tag name="Unit1::ReverbDryMix"          tag="2" />
-        <control-tag name="Unit1::ReverbWetMix"          tag="3" />
-        <control-tag name="Unit1::ReverbFreeze"          tag="4" />
-        <control-tag name="Unit1::ReverbPlaybackRate"    tag="5" />
-        <control-tag name="Unit1::BitResolution"         tag="6" />
-        <control-tag name="Unit1::BitCrusherChain"       tag="7" />
-        <control-tag name="Unit1::LFOBitResolution"      tag="8" />
-        <control-tag name="Unit1::LFOBitResolutionDepth" tag="9" />
-        <control-tag name="Unit1::Decimator"             tag="10 "/>
-        <control-tag name="Unit1::FilterCutoff"          tag="11 "/>
-        <control-tag name="Unit1::FilterResonance"       tag="12 "/>
-        <control-tag name="Unit1::LFOFilter"             tag="13 "/>
-        <control-tag name="Unit1::LFOFilterDepth"        tag="14 "/>
+        <control-tag name="Unit1::ReverbSize"            tag="1" />
+        <control-tag name="Unit1::ReverbWidth"           tag="2" />
+        <control-tag name="Unit1::FilterCutoff"          tag="3"/>
+        <!--<control-tag name="Unit1::FilterResonance"       tag="4"/>-->
+        <control-tag name="Unit1::LFOFilter"             tag="5"/>
+        <control-tag name="Unit1::LFOFilterDepth"        tag="6"/>
+        <control-tag name="Unit1::ReverbPlaybackRate"    tag="7" />
+        <control-tag name="Unit1::Decimator"             tag="8"/>
+        <control-tag name="Unit1::BitResolution"         tag="9" />
+        <control-tag name="Unit1::LFOBitResolution"      tag="10" />
+        <control-tag name="Unit1::LFOBitResolutionDepth" tag="11" />
+        <control-tag name="Unit1::BitCrusherChain"       tag="12" />
+        <control-tag name="Unit1::ReverbFreeze"          tag="13" />
+        <control-tag name="Unit1::ReverbDryMix"          tag="14" />
+        <control-tag name="Unit1::ReverbWetMix"          tag="15" />
     </control-tags>
 </vstgui-ui-description>

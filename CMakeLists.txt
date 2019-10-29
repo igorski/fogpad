@@ -168,9 +168,6 @@ if (JAMBA_ENABLE_AUDIO_UNIT)
 
     jamba_add_vst3_resource(${target} DATA "fogpad.uidesc")
     jamba_add_vst3_resource(${target} PNG "background.png")
-    jamba_add_vst3_resource(${target} PNG "slider_background.png")
-    jamba_add_vst3_resource(${target} PNG "slider_handle.png")
-    jamba_add_vst3_resource(${target} PNG "slider_handle_2.0x.png")
 
     # this must be called after you are done calling jamba_add_vst3_resource for all resources
     jamba_gen_vst3_resources(${target} "FogPad")
@@ -235,9 +232,6 @@ ENDIF (APPLE)
 
 smtg_add_vst3_resource(${target} "resource/fogpad.uidesc")
 smtg_add_vst3_resource(${target} "resource/background.png")
-smtg_add_vst3_resource(${target} "resource/slider_background.png")
-smtg_add_vst3_resource(${target} "resource/slider_handle.png")
-smtg_add_vst3_resource(${target} "resource/slider_handle_2.0x.png")
 
 if(MAC)
     smtg_set_bundle(${target} INFOPLIST "${CMAKE_CURRENT_SOURCE_DIR}/mac/Info.plist" PREPROCESS)

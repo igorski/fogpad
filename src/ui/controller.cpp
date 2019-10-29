@@ -77,35 +77,41 @@ tresult PLUGIN_API FogPadController::initialize( FUnknown* context )
     // Reverb controls
 
     parameters.addParameter( new RangeParameter(
-        USTRING( "Reverb size" ), kReverbSizeId, USTRING( "0 - 1" ),
+        USTRING( "Size" ), kReverbSizeId, USTRING( "0 - 1" ),
         0.f, 1.f, 0.f,
         0, ParameterInfo::kCanAutomate, unitId
     ));
 
     parameters.addParameter( new RangeParameter(
-        USTRING( "Reverb width" ), kReverbWidthId, USTRING( "0 - 1" ),
+        USTRING( "Width" ), kReverbWidthId, USTRING( "0 - 1" ),
         0.f, 1.f, 0.f,
         0, ParameterInfo::kCanAutomate, unitId
     ));
 
     parameters.addParameter( new RangeParameter(
-        USTRING( "Reverb dry mix" ), kReverbDryMixId, USTRING( "0 - 1" ),
+        USTRING( "Dry mix" ), kReverbDryMixId, USTRING( "0 - 1" ),
         0.f, 1.f, 0.f,
         0, ParameterInfo::kCanAutomate, unitId
     ));
 
     parameters.addParameter( new RangeParameter(
-        USTRING( "Reverb wet mix" ), kReverbWetMixId, USTRING( "0 - 1" ),
+        USTRING( "Wet mix" ), kReverbWetMixId, USTRING( "0 - 1" ),
         0.f, 1.f, 0.f,
         0, ParameterInfo::kCanAutomate, unitId
     ));
 
     parameters.addParameter(
-        USTRING( "Reverb feeze mode" ), 0, 1, 0, ParameterInfo::kCanAutomate, kReverbFreezeId, unitId
+        USTRING( "Freeze" ), 0, 1, 0, ParameterInfo::kCanAutomate, kReverbFreezeId, unitId
     );
 
     parameters.addParameter( new RangeParameter(
-        USTRING( "Reverb playback rate" ), kReverbPlaybackRateId, USTRING( "0 - 1" ),
+        USTRING( "Wobble" ), kReverbPlaybackRateId, USTRING( "0 - 1" ),
+        0.f, 1.f, 0.f,
+        0, ParameterInfo::kCanAutomate, unitId
+    ));
+
+    parameters.addParameter( new RangeParameter(
+        USTRING( "Prick" ), kDecimatorId, USTRING( "1 - 32" ),
         0.f, 1.f, 0.f,
         0, ParameterInfo::kCanAutomate, unitId
     ));
@@ -113,31 +119,23 @@ tresult PLUGIN_API FogPadController::initialize( FUnknown* context )
     // BitCrusher controls
 
     parameters.addParameter( new RangeParameter(
-        USTRING( "Bit resolution" ), kBitResolutionId, USTRING( "0 - 16" ),
-        16, 0, 16,
+        USTRING( "Bother bits" ), kBitResolutionId, USTRING( "0 - 1" ),
+        0.f, 1.f, 0.f,
         0, ParameterInfo::kCanAutomate, unitId
     ));
 
     parameters.addParameter(
-        USTRING( "BitCrusher chain" ), 0, 1, 0, ParameterInfo::kCanAutomate, kBitResolutionChainId, unitId
+        USTRING( "Bother pre/post" ), 0, 1, 0, ParameterInfo::kCanAutomate, kBitResolutionChainId, unitId
     );
 
     parameters.addParameter( new RangeParameter(
-        USTRING( "Bit LFO rate" ), kLFOBitResolutionId, USTRING( "Hz" ),
+        USTRING( "Bother LFO rate" ), kLFOBitResolutionId, USTRING( "Hz" ),
         Igorski::VST::MIN_LFO_RATE(), Igorski::VST::MAX_LFO_RATE(), Igorski::VST::MIN_LFO_RATE(),
         0, ParameterInfo::kCanAutomate, unitId
     ));
 
     parameters.addParameter( new RangeParameter(
-        USTRING( "Bit LFO depth" ), kLFOBitResolutionDepthId, USTRING( "%" ),
-        0.f, 1.f, 0.f,
-        0, ParameterInfo::kCanAutomate, unitId
-    ));
-
-    // Decimator controls
-
-    parameters.addParameter( new RangeParameter(
-        USTRING( "Decimator resolution" ), kDecimatorId, USTRING( "1 - 32" ),
+        USTRING( "Bother LFO depth" ), kLFOBitResolutionDepthId, USTRING( "%" ),
         0.f, 1.f, 0.f,
         0, ParameterInfo::kCanAutomate, unitId
     ));
