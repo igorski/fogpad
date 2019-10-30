@@ -65,6 +65,18 @@ void ReverbProcess::process( SampleType** inBuffer, SampleType** outBuffer, int 
 
         decimator->process( channelPreMixBuffer, bufferSize );
 
+        // record the incoming premixed, processed signal into the record buffer (for use with drift mode)
+
+        int recordIndex = _recordIndices[ c ];
+        for ( i = 0; i < bufferSize; ++i ) {
+            channelRecordBuffer[ recordIndex ] = ( float ) channelPreMixBuffer[ i ];
+            if ( ++recordIndex >= _maxRecordIndex ) {
+                recordIndex = 0;
+            }
+        }
+        // update last recording index for this channel
+        _recordIndices[ c ] = recordIndex;
+
         // REVERB processing applied onto the temp buffer
 
         SampleType inputSample, processedSample;
@@ -167,25 +179,11 @@ void ReverbProcess::prepareMixBuffers( SampleType** inBuffer, int numInChannels,
 
         SampleType* inChannelBuffer = ( SampleType* ) inBuffer[ c ];
         float* channelPremixBuffer  = ( float* ) _preMixBuffer->getBufferForChannel( c );
-        float* channelRecordBuffer  = ( float* ) _recordBuffer->getBufferForChannel( c );
-
-        int recordIndex = _recordIndices[ c ];
 
         for ( int i = 0; i < bufferSize; ++i ) {
-            float sample = ( float ) inChannelBuffer[ i ];
-
             // clone into the pre mix buffer for pre-processing
-            channelPremixBuffer[ i ] = sample;
-
-            // record into the record buffer for use with drift mode
-            channelRecordBuffer[ recordIndex ] = sample;
-
-            if ( ++recordIndex >= _maxRecordIndex ) {
-                recordIndex = 0;
-            }
+            channelPremixBuffer[ i ] = ( float ) inChannelBuffer[ i ];
         }
-        // update last recording index for this channel
-        _recordIndices[ c ] = recordIndex;
     }
 
     // if the post mix buffer wasn't created yet or the buffer size has changed
