@@ -23,7 +23,7 @@
 #define kAUPluginType 				aufx
 
 /* A subtype code for the audio unit, such as tmlo. This value must be exactly 4 alphanumeric characters. */
-#define kAUPluginSubType 			dely
+#define kAUPluginSubType 			rvb2
 
 /* A manufacturer code for the audio unit, such as Aaud. This value must be exactly 4 alphanumeric characters.
  * Manufacturer OSType should have at least one non-lower case character */
@@ -33,7 +33,7 @@
 #define kAudioUnitName				"igorski: FogPad" // same as kAUPluginName
 #define kAudioUnitDescription	    "FogPad" // same as kAUPluginDescription
 #define kAudioUnitType				'aufx' // same as kAUPluginType
-#define kAudioUnitComponentSubType	'dely' // same as kAUPluginSubType
+#define kAudioUnitComponentSubType	'rvb2' // same as kAUPluginSubType
 #define kAudioUnitComponentManuf    'IGOR' // same as kAUPluginManufacturer
 
 #define kAudioUnitCarbonView		1		// if 0 no Carbon view support will be added
