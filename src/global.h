@@ -9,7 +9,7 @@ using namespace Steinberg;
 namespace Igorski {
 namespace VST {
 
-    static const int   ID       = 0;
+    static const int   ID       = 9715186;
     static const char* NAME     = "FogPad";
     static const char* VENDOR   = "igorski.nl";
 
