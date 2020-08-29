@@ -193,7 +193,7 @@
         <attributes name="UIAttributesController"/>
         <attributes SelectedRow="23" name="UIViewCreatorDataSource"/>
         <attributes SelectedRow="4" name="UIBitmapsDataSource"/>
-        <attributes Path="resources/graphics/fogpad.uidesc" name="VST3Editor"/>
+        <attributes Path="resource/plugin.uidesc" name="VST3Editor"/>
         <attributes SelectedRow="2" name="UITagsDataSource"/>
         <attributes SelectedRow="0" name="UIColorsDataSource"/>
         <attributes SelectedRow="-1" name="UIGradientsDataSource"/>

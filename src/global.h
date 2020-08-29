@@ -24,7 +24,7 @@ namespace VST {
     static const float TWO_PI = PI * 2.f;
 
     // maximum and minimum filter frequency ranges
-    // also see fogpad.uidesc to update the controls to match
+    // also see plugin.uidesc to update the controls to match
 
     static const float FILTER_MIN_FREQ      = 30.f;
     static const float FILTER_MAX_FREQ      = 20000.f;
@@ -32,7 +32,7 @@ namespace VST {
     static const float FILTER_MAX_RESONANCE = 0.7071067811865476f; //sqrt( 2.f ) / 2.f;
 
     // maximum and minimum rate of oscillation in Hz
-    // also see fogpad.uidesc to update the controls to match
+    // also see plugin.uidesc to update the controls to match
 
     static const float MAX_LFO_RATE() { return 10.f; }
     static const float MIN_LFO_RATE() { return .1f; }

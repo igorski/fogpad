@@ -3,8 +3,8 @@
 
 #define APSTUDIO_READONLY_SYMBOLS
 
-fogpad.uidesc           DATA "fogpad.uidesc"
-background.png		PNG  "background.png"
+plugin.uidesc       DATA "plugin.uidesc"
+background.png      PNG  "background.png"
 
 /////////////////////////////////////////////////////////////////////////////
 // Version

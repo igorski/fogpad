@@ -34,7 +34,7 @@ namespace Vst {
 // FogPadUIMessageController
 //------------------------------------------------------------------------
 template <typename ControllerType>
-class FogPadUIMessageController : public VSTGUI::IController, public VSTGUI::IViewListenerAdapter
+class FogPadUIMessageController : public VSTGUI::IController, public VSTGUI::ViewListenerAdapter
 {
     public:
         enum Tags

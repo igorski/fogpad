@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.17)
 
 include(FetchContent)
 
@@ -10,7 +10,7 @@ else()
 endif()
 
 set(JAMBA_GIT_REPO "https://github.com/pongasoft/jamba" CACHE STRING "Jamba git repository url" FORCE)
-set(JAMBA_GIT_TAG v3.0.1 CACHE STRING "Jamba git tag" FORCE)
+set(JAMBA_GIT_TAG v5.0.0 CACHE STRING "Jamba git tag" FORCE)
 
 FetchContent_Declare(jamba
     GIT_REPOSITORY    ${JAMBA_GIT_REPO}
