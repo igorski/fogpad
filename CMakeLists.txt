@@ -257,8 +257,8 @@ IF (APPLE)
         MACOSX_BUNDLE_BUNDLE_NAME "${project}"
         MACOSX_BUNDLE_GUI_IDENTIFIER "nl.igorski.${target}"
         MACOSX_BUNDLE_ICON_FILE ""
-        MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0.4"
-        MACOSX_BUNDLE_COPYRIGHT "igorski.nl © 2018"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0.2"
+        MACOSX_BUNDLE_COPYRIGHT "igorski.nl © 2019"
     )
 endif()
 
