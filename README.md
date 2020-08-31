@@ -24,20 +24,17 @@ And rename the generated plugin extension from _.vst3_ to _.vst_ (or _.dll_ on W
 
 ## Build instructions
 
-The project has been built and tested on macOS, Windows 10 and Linux (Ubuntu) and should build completely via CLI without requiring either a full IDE such as Xcode or Visual Studio (for aforementioned IDE's their
-command line/build tools suffice). The project uses [CMake](https://cmake.org) to generate the Makefiles.
+The project uses [CMake](https://cmake.org) to generate the Makefiles and has been built and tested on macOS, Windows 10 and Linux (Ubuntu).
 
 ### Environment setup
 
-Apart from requiring _CMake_ and a C(++) compiler such as _Clang_ or _MSVC_, the only other dependency is the [VST SDK from Steinberg](https://www.steinberg.net/en/company/developers.html) (the project has been developed against VST3 SDK version 3.7.0).
+Apart from requiring _CMake_ and a C(++) compiler such as _Clang_ or _MSVC_, the only other dependency is the [VST SDK from Steinberg](https://www.steinberg.net/en/company/developers.html) (the projects latest update requires SDK version 3.7.0).
 
-Be aware that prior to building the plugin, the Steinberg VST needs to be built from source as well. Following Steinbergs guidelines, the build target should be a _/build_-subfolder of the _/VST3_SDK_-folder.
-To generate a release build, execute the following commands from the Steinberg VST SDK root (run the _.bat_ verions instead of the _.sh_ versions on Windows):
+Be aware that prior to building the plugin, the Steinberg SDK needs to be built from source as well. Following Steinbergs guidelines, the build target should be a _/build_-subfolder of the _/VST3_SDK_-folder.
+To generate a release build of the library, execute the following commands from the root of the Steinberg SDK folder:
 
 ```
-./copy_vst2_to_vst3_sdk.sh
 cd VST3_SDK
-./tools/setup_linux_packages_for_vst3sdk.sh # <- this step is Linux only
 mkdir build
 cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
@@ -45,14 +42,25 @@ cmake --build .
 ```
 
 The result being that _{VST3_SDK_ROOT}/VST3_SDK/build/lib/Release/_ will contain the Steinberg VST libraries required to build the plugin.
-
 NOTE: Windows users need to append _--config Release_ to the last cmake (build) call as the build type must be defined during this step.
+
+If you intend to build VST2 versions as well, run the following from the root of the Steinberg SDK folder (run the _.bat_ version instead of the _.sh_ version on Windows) prior to building the library:
+
+```
+./copy_vst2_to_vst3_sdk.sh
+```
+
+And if you are running Linux, you can easily resolve all dependencies by first running the following from the root of the Steinberg SDK folder:
+
+```
+./tools/setup_linux_packages_for_vst3sdk.sh
+```
 
 ### Building the plugin
 
 Run CMake to generate the Makefile for your environment, after which you can compile the plugin using make. The build output will be stored in _./build/VST3/fogpad.vst3_ as well as symbolically linked to your systems VST-plugin folder (on Unix).
 
-You must provide the path to your custom SDK download location by providing _VST3_SDK_ROOT_ to CMake like so:
+You must provide the path to the Steinberg SDK by providing _VST3_SDK_ROOT_ to CMake like so:
 
 ```
 cmake -DVST3_SDK_ROOT=/path/to/VST_SDK/VST3_SDK/ ..
