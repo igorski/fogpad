@@ -37,6 +37,8 @@
 
 namespace Igorski {
 
+float VST::SAMPLE_RATE = 44100.f; // updated in setupProcessing()
+
 //------------------------------------------------------------------------
 // FogPad Implementation
 //------------------------------------------------------------------------

@@ -16,9 +16,7 @@ namespace VST {
     static const FUID FogPadProcessorUID( 0xF2458509, 0xCBF43926, 0x04C11DB7, 0xFFFFFFFF );
     static const FUID FogPadControllerUID( 0x10499968, 0xCBF43926, 0x04C11DB7, 0xFFFFFFFF );
 
-    // set upon initialization, see vst.cpp
-    static float SAMPLE_RATE = 44100.f;
-    static int BUFFER_SIZE   = 8192;
+    extern float SAMPLE_RATE; // set upon initialization, see vst.cpp
 
     static const float PI     = 3.141592653589793f;
     static const float TWO_PI = PI * 2.f;
