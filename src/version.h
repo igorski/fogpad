@@ -22,11 +22,7 @@
 #define VERSION_STR MAJOR_VERSION_STR "." SUB_VERSION_STR "." RELEASE_NUMBER_STR
 
 #define stringOriginalFilename  "fogpad.vst3"
-#if PLATFORM_64
-#define stringFileDescription   "FogPad plugin (64Bit)"
-#else
 #define stringFileDescription   "FogPad plugin"
-#endif
 #define stringCompanyName       "igorski.nl\0"
 #define stringLegalCopyright    #PLUGIN_COPYRIGHT
 #define stringLegalTrademarks   "VST is a trademark of Steinberg Media Technologies GmbH"

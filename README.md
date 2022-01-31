@@ -22,6 +22,37 @@ set(SMTG_CREATE_VST2_VERSION "Use VST2" ON)
 
 And rename the generated plugin extension from _.vst3_ to _.vst_ (or _.dll_ on Windows).
 
+### Compiling for both 32-bit and 64-bit architectures
+
+Depending on your host software having 32-bit or 64-bit support, you can best compile for a wider range of architectures. To do so,
+replace all invocations of _cmake_ in this README with the following:
+
+**macOS:**
+
+```
+cmake -"DCMAKE_OSX_ARCHITECTURES=x86_64;i1386" ..
+```
+
+Which will allow you to compile a single, "fat" binary that supports all architectures.
+
+**Windows:**
+
+```
+cmake.exe -G "Visual Studio 16 2019" -A Win64 -S .. -B "build64"
+cmake.exe --build build64 --config Release
+
+cmake.exe -G "Visual Studio 16 2019" -A Win32 -S .. -B "build32"
+cmake.exe --build build32 --config Release
+```
+
+Which is a little more cumbersome as you compile separate binaries for the separate architectures.
+
+Note that the above also needs to be done when building the Steinberg SDK (which for the Windows build implies that a separate build is created for each architecture).
+
+While macOS has been fully 64-bit for the past versions, building for 32-bit provides the best backward
+compatibility for older OS versions. And musicians are known to keep working systems at the cost of not
+running an up to date system...
+
 ## Build instructions
 
 The project uses [CMake](https://cmake.org) to generate the Makefiles and has been built and tested on macOS, Windows 10 and Linux (Ubuntu).
