@@ -39,7 +39,7 @@ class FogPadUIMessageController;
 //------------------------------------------------------------------------
 // FogPadController
 //------------------------------------------------------------------------
-class FogPadController : public EditControllerEx1, public IMidiMapping, public VST3EditorDelegate
+class FogPadController : public EditControllerEx1, public IMidiMapping, public VSTGUI::VST3EditorDelegate
 {
     public:
         typedef FogPadUIMessageController<FogPadController> UIMessageController;

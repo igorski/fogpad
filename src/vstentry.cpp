@@ -35,26 +35,11 @@ extern void* moduleHandle;
 using namespace Steinberg::Vst;
 using namespace Igorski;
 
-//------------------------------------------------------------------------
-//  Module init/exit
-//------------------------------------------------------------------------
-
-//------------------------------------------------------------------------
-// called after library was loaded
-bool InitModule ()
-{
 #if TARGET_OS_IPHONE
      Steinberg::Vst::VSTGUIEditor::setBundleRef( moduleHandle );
-#endif
-    return true;
-}
-
-//------------------------------------------------------------------------
-// called after library is unloaded
-bool DeinitModule ()
-{
-    return true;
-}
+ #include "public.sdk/source/vst/vstguieditor.h"
+ extern void* moduleHandle;
+ #endif
 
 //------------------------------------------------------------------------
 //  VST Plug-in Entry

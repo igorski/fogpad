@@ -2,25 +2,27 @@
 # CMake Project for FOGPAD Plugin #
 ###################################
 
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.19)
 set(CMAKE_COLOR_MAKEFILE ON)
 
 # uncomment to build as VST2.4 instead of VST3.0 (provides wider DAW compatibility), not supported on Linux
 #set(SMTG_CREATE_VST2_VERSION "Use VST2" ON)
 
 project(Fogpad)
+set(PROJECT_VERSION 1)
 set(target fogpad)
 set(copyright "igorski.nl 2019-2020")
 set(major_version 1)
 set(minor_version 0)
 set(release_number 2)
 set(build_number 1) # TODO supply through CLI (build number is not included in public facing version strings)
+set(SMTG_CREATE_MODULE_INFO false)
 
 #####################
 # Compiler settings #
 #####################
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 add_definitions(-DNDEBUG)
 add_compile_definitions(PLUGIN_COPYRIGHT=${copyright})
 add_compile_definitions(PLUGIN_MAJOR_VERSION=${major_version})
@@ -34,11 +36,11 @@ endif()
 
 if(UNIX)
     if(XCODE)
-       set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++14")
+       set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++17")
        set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
     elseif(APPLE)
        set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
-       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -stdlib=libc++")
+       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -stdlib=libc++")
        link_libraries(c++)
        # support Yosemite and up
        set(CMAKE_OSX_SYSROOT macosx10.10)
@@ -47,7 +49,7 @@ if(UNIX)
         set(LINUX true)
         add_definitions( -D__cdecl= )
         set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wno-multichar")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wno-multichar")
         link_libraries(stdc++fs pthread dl)
     endif()
 else()
@@ -62,18 +64,18 @@ endif()
 
 list(APPEND CMAKE_MODULE_PATH "${VST3_SDK_ROOT}/cmake/modules")
 
-include(Global)
-include(AddVST3Library)
-include(Bundle)
-include(ExportedSymbols)
-include(PrefixHeader)
-include(PlatformIOS)
-include(PlatformToolset)
-include(CoreAudioSupport)
-include(AAXSupport)
-include(VstGuiSupport)
-include(UniversalBinary)
-include(AddVST3Options)
+include(SMTG_Global)
+include(SMTG_AddVST3Library)
+include(SMTG_Bundle)
+include(SMTG_ExportedSymbols)
+include(SMTG_PrefixHeader)
+include(SMTG_PlatformIOS)
+include(SMTG_PlatformToolset)
+include(SMTG_CoreAudioSupport)
+include(SMTG_AAXSupport)
+include(SMTG_VstGuiSupport)
+include(SMTG_UniversalBinary)
+include(SMTG_AddVST3Options)
 
 #########################
 # Steinberg VST sources #
@@ -81,6 +83,7 @@ include(AddVST3Options)
 
 set(VSTSDK_INCLUDE_DIR ${VST3_SDK_ROOT})
 set(VSTSDK_PLUGIN_SOURCE
+    ${VST3_SDK_ROOT}/public.sdk/source/common/commoniids.cpp
     ${VST3_SDK_ROOT}/public.sdk/source/vst/vstaudioeffect.cpp
     ${VST3_SDK_ROOT}/public.sdk/source/vst/vstaudioprocessoralgo.h
     ${VST3_SDK_ROOT}/public.sdk/source/vst/vsteditcontroller.h
@@ -95,6 +98,17 @@ set(vst2_sources
     ${VST3_SDK_ROOT}/public.sdk/source/vst/vst2wrapper/vst2wrapper.sdk.cpp
     src/vstentry_vst2.cpp
 )
+if(APPLE)
+     set(vst2_sources
+         ${vst2_sources}
+         ${VST3_SDK_ROOT}/public.sdk/source/common/threadchecker_mac.mm
+     )
+ elseif(WIN)
+     set(vst2_sources
+         ${vst2_sources}
+         ${VST3_SDK_ROOT}/public.sdk/source/common/threadchecker_win32.cpp
+     )
+ endif()
 
 ##########################
 # Plugin project sources #
@@ -315,14 +329,14 @@ endif()
 
 ## Add the resource files to the bundle
 
-smtg_add_vst3_resource(${target} ${vst_ui_descr})
-foreach(resource IN ITEMS ${vst_resources})
-    smtg_add_vst3_resource(${target} ${resource})
-endforeach()
+smtg_target_add_plugin_resources(${target}
+    RESOURCES ${vst_ui_descr} ${vst_resources}
+)
 
 if(APPLE)
-    smtg_set_bundle(${target} INFOPLIST "${CMAKE_CURRENT_SOURCE_DIR}/mac/Info.plist" PREPROCESS)
-    smtg_add_plugin_resource(${target} "${CMAKE_CURRENT_SOURCE_DIR}/mac/PkgInfo" "../") # adding PkgInfo at root level makes plugin appear as a file instead of folder
+    smtg_target_set_bundle(${target} INFOPLIST "${CMAKE_CURRENT_SOURCE_DIR}/mac/Info.plist" PREPROCESS)
+    # adding PkgInfo at root level makes plugin appear as a file instead of folder
+    smtg_target_add_plugin_resources(${target} RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/mac/PkgInfo" OUTPUT_SUBDIRECTORY "../")
 elseif(WIN)
     target_sources(${target} PRIVATE resource/plugin.rc)
 endif()
