@@ -61,7 +61,7 @@ FogPad::FogPad()
 , fLFOFilter( 0.f )
 , fLFOFilterDepth( 0.5f )
 , reverbProcess( nullptr )
-, outputGainOld( 0.f )
+// , outputGainOld( 0.f )
 , currentProcessMode( -1 ) // -1 means not initialized
 {
     // register its editor class (the same as used in vstentry.cpp)
@@ -113,7 +113,7 @@ tresult PLUGIN_API FogPad::setActive (TBool state)
         sendTextMessage( "FogPad::setActive (false)" );
 
     // reset output level meter
-    outputGainOld = 0.f;
+    // outputGainOld = 0.f;
 
     // call our parent setActive
     return AudioEffect::setActive( state );
@@ -222,6 +222,11 @@ tresult PLUGIN_API FogPad::process( ProcessData& data )
                             fLFOFilterDepth = ( float ) value;
                         break;
 
+                    case kBypassId:
+                        if ( paramQueue->getPoint( numPoints - 1, sampleOffset, value ) == kResultTrue )
+                            _bypass = ( value > 0.5f );
+                        break;
+
                 }
                 syncModel();
             }
@@ -253,37 +258,38 @@ tresult PLUGIN_API FogPad::process( ProcessData& data )
 
     bool isDoublePrecision = ( data.symbolicSampleSize == kSample64 );
 
-    if ( isDoublePrecision ) {
-        // 64-bit samples, e.g. Reaper64
-        reverbProcess->process<double>(
-            ( double** ) in, ( double** ) out, numInChannels, numOutChannels,
-            data.numSamples, sampleFramesSize
-        );
-    }
-    else {
-        // 32-bit samples, e.g. Ableton Live, Bitwig Studio... (oddly enough also when 64-bit?)
-        reverbProcess->process<float>(
-            ( float** ) in, ( float** ) out, numInChannels, numOutChannels,
-            data.numSamples, sampleFramesSize
-        );
+    if ( _bypass )
+    {
+        // bypass mode, write the input unchanged into the output
+        for ( int32 i = 0, l = std::min( numInChannels, numOutChannels ); i < l; i++ )
+		{
+			if ( in[ i ] != out[ i ])
+			{
+				memcpy( out[ i ], in[ i ], sampleFramesSize );
+			}
+		}
+    } else {
+        if ( isDoublePrecision ) {
+            // 64-bit samples, e.g. Reaper64
+            reverbProcess->process<double>(
+                ( double** ) in, ( double** ) out, numInChannels, numOutChannels,
+                data.numSamples, sampleFramesSize
+            );
+        }
+        else {
+            // 32-bit samples, e.g. Ableton Live, Bitwig Studio... (oddly enough also when 64-bit?)
+            reverbProcess->process<float>(
+                ( float** ) in, ( float** ) out, numInChannels, numOutChannels,
+                data.numSamples, sampleFramesSize
+            );
+        }
     }
 
     // output flags
 
     data.outputs[ 0 ].silenceFlags = false; // there should always be output
-    float outputGain = reverbProcess->limiter->getLinearGR();
+    //float outputGain = reverbProcess->limiter->getLinearGR();
 
-    //---4) Write output parameter changes-----------
-    IParameterChanges* outParamChanges = data.outputParameterChanges;
-    // a new value of VuMeter will be sent to the host
-    // (the host will send it back in sync to our controller for updating our editor)
-    if ( !isDoublePrecision && outParamChanges && outputGainOld != outputGain ) {
-        int32 index = 0;
-        IParamValueQueue* paramQueue = outParamChanges->addParameterData( kVuPPMId, index );
-        if ( paramQueue )
-            paramQueue->addPoint( 0, outputGain, index );
-    }
-    outputGainOld = outputGain;
     return kResultOk;
 }
 
@@ -365,6 +371,12 @@ tresult PLUGIN_API FogPad::setState( IBStream* state )
     if ( streamer.readFloat( savedLFOFilterDepth ) == false )
         return kResultFalse;
 
+    // may fail as this was only added in version 1.0.3.1
+    int32 savedBypass = 0;
+    if ( streamer.readInt32( savedBypass ) != false ) {
+        _bypass = savedBypass;
+    }
+
     fReverbSize             = savedReverbSize;
     fReverbWidth            = savedReverbWidth;
     fReverbDryMix           = savedReverbDryMix;
@@ -438,6 +450,7 @@ tresult PLUGIN_API FogPad::getState( IBStream* state )
     streamer.writeFloat( fFilterResonance );
     streamer.writeFloat( fLFOFilter );
     streamer.writeFloat( fLFOFilterDepth );
+    streamer.writeInt32( _bypass ? 1 : 0 );
 
     return kResultOk;
 }

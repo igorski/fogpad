@@ -222,5 +222,6 @@
         <control-tag name="Unit1::ReverbFreeze"          tag="13" />
         <control-tag name="Unit1::ReverbDryMix"          tag="14" />
         <control-tag name="Unit1::ReverbWetMix"          tag="15" />
+        <control-tag name="Root::Bypass"                 tag="16" />
     </control-tags>
 </vstgui-ui-description>
