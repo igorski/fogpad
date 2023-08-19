@@ -482,11 +482,6 @@ tresult PLUGIN_API FogPad::setupProcessing( ProcessSetup& newSetup )
 tresult PLUGIN_API FogPad::setBusArrangements( SpeakerArrangement* inputs,  int32 numIns,
                                                SpeakerArrangement* outputs, int32 numOuts )
 {
-    if ( reverbProcess != nullptr )
-        delete reverbProcess;
-
-    reverbProcess = new ReverbProcess( numOuts );
-
     if ( numIns == 1 && numOuts == 1 )
     {
         // the host wants Mono => Mono (or 1 channel -> 1 channel)
