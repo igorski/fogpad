@@ -257,6 +257,7 @@ tresult PLUGIN_API FogPad::process( ProcessData& data )
     // process the incoming sound!
 
     bool isDoublePrecision = ( data.symbolicSampleSize == kSample64 );
+    bool isSilent = false;
 
     if ( _bypass )
     {
@@ -269,25 +270,31 @@ tresult PLUGIN_API FogPad::process( ProcessData& data )
 			}
 		}
     } else {
-        if ( isDoublePrecision ) {
-            // 64-bit samples, e.g. Reaper64
-            reverbProcess->process<double>(
-                ( double** ) in, ( double** ) out, numInChannels, numOutChannels,
-                data.numSamples, sampleFramesSize
-            );
-        }
-        else {
-            // 32-bit samples, e.g. Ableton Live, Bitwig Studio... (oddly enough also when 64-bit?)
-            reverbProcess->process<float>(
-                ( float** ) in, ( float** ) out, numInChannels, numOutChannels,
-                data.numSamples, sampleFramesSize
-            );
+        if ( data.inputs[ 0 ].silenceFlags == 0 ) {
+            if ( isDoublePrecision ) {
+                // 64-bit samples, e.g. Reaper64
+                reverbProcess->process<double>(
+                    ( double** ) in, ( double** ) out, numInChannels, numOutChannels,
+                    data.numSamples, sampleFramesSize
+                );
+            }
+            else {
+                // 32-bit samples, e.g. Ableton Live, Bitwig Studio... (oddly enough also when 64-bit?)
+                reverbProcess->process<float>(
+                    ( float** ) in, ( float** ) out, numInChannels, numOutChannels,
+                    data.numSamples, sampleFramesSize
+                );
+            }
+        } else {
+            isSilent = true;
         }
     }
 
     // output flags
 
-    data.outputs[ 0 ].silenceFlags = false; // there should always be output
+    if ( isSilent ) {
+        data.outputs[ 0 ].silenceFlags = (( uint64 ) 1 << numOutChannels ) - 1;
+    }
     //float outputGain = reverbProcess->limiter->getLinearGR();
 
     return kResultOk;
