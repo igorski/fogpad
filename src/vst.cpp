@@ -259,42 +259,43 @@ tresult PLUGIN_API FogPad::process( ProcessData& data )
     bool isDoublePrecision = ( data.symbolicSampleSize == kSample64 );
     bool isSilent = false;
 
+    if ( data.inputs[ 0 ].silenceFlags != 0 ) {
+        isSilent = true;
+    }
+
     if ( _bypass )
     {
         // bypass mode, write the input unchanged into the output
         for ( int32 i = 0, l = std::min( numInChannels, numOutChannels ); i < l; i++ )
-		{
-			if ( in[ i ] != out[ i ])
-			{
-				memcpy( out[ i ], in[ i ], sampleFramesSize );
-			}
-		}
+        {
+            if ( in[ i ] != out[ i ])
+            {
+                memcpy( out[ i ], in[ i ], sampleFramesSize );
+            }
+        }
     } else {
-        if ( data.inputs[ 0 ].silenceFlags == 0 ) {
-            if ( isDoublePrecision ) {
-                // 64-bit samples, e.g. Reaper64
-                reverbProcess->process<double>(
-                    ( double** ) in, ( double** ) out, numInChannels, numOutChannels,
-                    data.numSamples, sampleFramesSize
-                );
-            }
-            else {
-                // 32-bit samples, e.g. Ableton Live, Bitwig Studio... (oddly enough also when 64-bit?)
-                reverbProcess->process<float>(
-                    ( float** ) in, ( float** ) out, numInChannels, numOutChannels,
-                    data.numSamples, sampleFramesSize
-                );
-            }
-        } else {
-            isSilent = true;
+        if ( isDoublePrecision ) {
+            // 64-bit samples, e.g. Reaper64
+            reverbProcess->process<double>(
+                ( double** ) in, ( double** ) out, numInChannels, numOutChannels,
+                data.numSamples, sampleFramesSize
+            );
+        }
+        else {
+            // 32-bit samples, e.g. Ableton Live, Bitwig Studio... (oddly enough also when 64-bit?)
+            reverbProcess->process<float>(
+                ( float** ) in, ( float** ) out, numInChannels, numOutChannels,
+                data.numSamples, sampleFramesSize
+            );
         }
     }
 
     // output flags
 
-    if ( isSilent ) {
-        data.outputs[ 0 ].silenceFlags = (( uint64 ) 1 << numOutChannels ) - 1;
-    }
+    // we don't process silence flags as the reverb process can have a tail from previous input
+    // if ( isSilent ) {
+    //     data.outputs[ 0 ].silenceFlags = (( uint64 ) 1 << numOutChannels ) - 1;
+    // }
     //float outputGain = reverbProcess->limiter->getLinearGR();
 
     return kResultOk;

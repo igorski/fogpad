@@ -155,6 +155,7 @@ endif()
 
 set(vst_resources
     "resource/background.png"
+    "resource/version.png"
 )
 set(vst_ui_descr "resource/plugin.uidesc")
 
