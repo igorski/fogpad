@@ -47,7 +47,8 @@ enum
     kReverbDryMixId,          // reverb wet mix
     kReverbWetMixId,          // reverb dry mix
 
-    kVuPPMId                  // for the Vu value return to host
+    // kVuPPMId,                 // for the Vu value return to host
+    kBypassId,                // bypass process (added in v1.0.3.1)
 };
 
 #endif

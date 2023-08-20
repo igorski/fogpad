@@ -11,10 +11,10 @@ set(CMAKE_COLOR_MAKEFILE ON)
 project(Fogpad)
 set(PROJECT_VERSION 1)
 set(target fogpad)
-set(copyright "igorski.nl 2019-2020")
+set(copyright "igorski.nl 2019-2023")
 set(major_version 1)
 set(minor_version 0)
-set(release_number 2)
+set(release_number 3)
 set(build_number 1) # TODO supply through CLI (build number is not included in public facing version strings)
 set(SMTG_CREATE_MODULE_INFO false)
 
@@ -155,6 +155,7 @@ endif()
 
 set(vst_resources
     "resource/background.png"
+    "resource/version.png"
 )
 set(vst_ui_descr "resource/plugin.uidesc")
 

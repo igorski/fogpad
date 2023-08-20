@@ -105,7 +105,8 @@ class FogPad : public AudioEffect
         float fLFOFilter;
         float fLFOFilterDepth;
 
-        float outputGainOld; // for visualizing output gain in DAW
+        // float outputGainOld; // for visualizing output gain in DAW
+        bool _bypass { false };
 
         int32 currentProcessMode;
 

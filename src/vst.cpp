@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2018-2019 Igor Zinken - https://www.igorski.nl
+ * Copyright (c) 2018-2023 Igor Zinken - https://www.igorski.nl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -33,6 +33,8 @@
 #include "pluginterfaces/vst/ivstparameterchanges.h"
 #include "pluginterfaces/vst/vstpresetkeys.h"
 
+#include "base/source/fstreamer.h"
+
 #include <stdio.h>
 
 namespace Igorski {
@@ -59,7 +61,7 @@ FogPad::FogPad()
 , fLFOFilter( 0.f )
 , fLFOFilterDepth( 0.5f )
 , reverbProcess( nullptr )
-, outputGainOld( 0.f )
+// , outputGainOld( 0.f )
 , currentProcessMode( -1 ) // -1 means not initialized
 {
     // register its editor class (the same as used in vstentry.cpp)
@@ -111,7 +113,7 @@ tresult PLUGIN_API FogPad::setActive (TBool state)
         sendTextMessage( "FogPad::setActive (false)" );
 
     // reset output level meter
-    outputGainOld = 0.f;
+    // outputGainOld = 0.f;
 
     // call our parent setActive
     return AudioEffect::setActive( state );
@@ -220,6 +222,11 @@ tresult PLUGIN_API FogPad::process( ProcessData& data )
                             fLFOFilterDepth = ( float ) value;
                         break;
 
+                    case kBypassId:
+                        if ( paramQueue->getPoint( numPoints - 1, sampleOffset, value ) == kResultTrue )
+                            _bypass = ( value > 0.5f );
+                        break;
+
                 }
                 syncModel();
             }
@@ -250,38 +257,47 @@ tresult PLUGIN_API FogPad::process( ProcessData& data )
     // process the incoming sound!
 
     bool isDoublePrecision = ( data.symbolicSampleSize == kSample64 );
+    bool isSilent = false;
 
-    if ( isDoublePrecision ) {
-        // 64-bit samples, e.g. Reaper64
-        reverbProcess->process<double>(
-            ( double** ) in, ( double** ) out, numInChannels, numOutChannels,
-            data.numSamples, sampleFramesSize
-        );
+    if ( data.inputs[ 0 ].silenceFlags != 0 ) {
+        isSilent = true;
     }
-    else {
-        // 32-bit samples, e.g. Ableton Live, Bitwig Studio... (oddly enough also when 64-bit?)
-        reverbProcess->process<float>(
-            ( float** ) in, ( float** ) out, numInChannels, numOutChannels,
-            data.numSamples, sampleFramesSize
-        );
+
+    if ( _bypass )
+    {
+        // bypass mode, write the input unchanged into the output
+        for ( int32 i = 0, l = std::min( numInChannels, numOutChannels ); i < l; i++ )
+        {
+            if ( in[ i ] != out[ i ])
+            {
+                memcpy( out[ i ], in[ i ], sampleFramesSize );
+            }
+        }
+    } else {
+        if ( isDoublePrecision ) {
+            // 64-bit samples, e.g. Reaper64
+            reverbProcess->process<double>(
+                ( double** ) in, ( double** ) out, numInChannels, numOutChannels,
+                data.numSamples, sampleFramesSize
+            );
+        }
+        else {
+            // 32-bit samples, e.g. Ableton Live, Bitwig Studio... (oddly enough also when 64-bit?)
+            reverbProcess->process<float>(
+                ( float** ) in, ( float** ) out, numInChannels, numOutChannels,
+                data.numSamples, sampleFramesSize
+            );
+        }
     }
 
     // output flags
 
-    data.outputs[ 0 ].silenceFlags = false; // there should always be output
-    float outputGain = reverbProcess->limiter->getLinearGR();
+    // we don't process silence flags as the reverb process can have a tail from previous input
+    // if ( isSilent ) {
+    //     data.outputs[ 0 ].silenceFlags = (( uint64 ) 1 << numOutChannels ) - 1;
+    // }
+    //float outputGain = reverbProcess->limiter->getLinearGR();
 
-    //---4) Write output parameter changes-----------
-    IParameterChanges* outParamChanges = data.outputParameterChanges;
-    // a new value of VuMeter will be sent to the host
-    // (the host will send it back in sync to our controller for updating our editor)
-    if ( !isDoublePrecision && outParamChanges && outputGainOld != outputGain ) {
-        int32 index = 0;
-        IParamValueQueue* paramQueue = outParamChanges->addParameterData( kVuPPMId, index );
-        if ( paramQueue )
-            paramQueue->addPoint( 0, outputGain, index );
-    }
-    outputGainOld = outputGain;
     return kResultOk;
 }
 
@@ -301,83 +317,73 @@ tresult PLUGIN_API FogPad::setState( IBStream* state )
 {
     // called when we load a preset, the model has to be reloaded
 
+    IBStreamer streamer( state, kLittleEndian );
+
     float savedReverbSize = 0.f;
-    if ( state->read( &savedReverbSize, sizeof ( float )) != kResultOk )
+    if ( streamer.readFloat( savedReverbSize ) == false )
         return kResultFalse;
 
     float savedReverbWidth = 0.f;
-    if ( state->read( &savedReverbWidth, sizeof ( float )) != kResultOk )
+    if ( streamer.readFloat( savedReverbWidth ) == false )
         return kResultFalse;
 
     float savedReverbDryMix = 0.f;
-    if ( state->read( &savedReverbDryMix, sizeof ( float )) != kResultOk )
+    if ( streamer.readFloat( savedReverbDryMix ) == false )
         return kResultFalse;
 
     float savedReverbWetMix = 0.f;
-    if ( state->read( &savedReverbWetMix, sizeof ( float )) != kResultOk )
+    if ( streamer.readFloat( savedReverbWetMix ) == false )
         return kResultFalse;
 
     float savedReverbFreeze = 0.f;
-    if ( state->read( &savedReverbFreeze, sizeof ( float )) != kResultOk )
+    if ( streamer.readFloat( savedReverbFreeze ) == false )
         return kResultFalse;
 
     float savedReverbPlaybackRate = 0.f;
-    if ( state->read( &savedReverbPlaybackRate, sizeof ( float )) != kResultOk )
+    if ( streamer.readFloat( savedReverbPlaybackRate ) == false )
         return kResultFalse;
 
     float savedBitResolution = 0.f;
-    if ( state->read( &savedBitResolution, sizeof ( float )) != kResultOk )
+    if ( streamer.readFloat( savedBitResolution ) == false )
         return kResultFalse;
 
     float savedBitResolutionChain = 0.f;
-    if ( state->read( &savedBitResolutionChain, sizeof ( float )) != kResultOk )
+    if ( streamer.readFloat( savedBitResolutionChain ) == false )
         return kResultFalse;
 
     float savedLFOBitResolution = 0.f;
-    if ( state->read( &savedLFOBitResolution, sizeof ( float )) != kResultOk )
+    if ( streamer.readFloat( savedLFOBitResolution ) == false )
         return kResultFalse;
 
     float savedLFOBitResolutionDepth = 0.f;
-    if ( state->read( &savedLFOBitResolutionDepth, sizeof ( float )) != kResultOk )
+    if ( streamer.readFloat( savedLFOBitResolutionDepth ) == false )
         return kResultFalse;
 
     float savedDecimator = 0.f;
-    if ( state->read( &savedDecimator, sizeof ( float )) != kResultOk )
+    if ( streamer.readFloat( savedDecimator ) == false )
         return kResultFalse;
 
     float savedFilterCutoff = 0.f;
-    if ( state->read( &savedFilterCutoff, sizeof ( float )) != kResultOk )
+    if ( streamer.readFloat( savedFilterCutoff ) == false )
         return kResultFalse;
 
     float savedFilterResonance = 0.f;
-    if ( state->read( &savedFilterResonance, sizeof ( float )) != kResultOk )
+    if ( streamer.readFloat( savedFilterResonance ) == false )
         return kResultFalse;
 
     float savedLFOFilter = 0.f;
-    if ( state->read( &savedLFOFilter, sizeof ( float )) != kResultOk )
+    if ( streamer.readFloat( savedLFOFilter ) == false )
         return kResultFalse;
 
     float savedLFOFilterDepth = 0.f;
-    if ( state->read( &savedLFOFilterDepth, sizeof ( float )) != kResultOk )
+    if ( streamer.readFloat( savedLFOFilterDepth ) == false )
         return kResultFalse;
 
-#if BYTEORDER == kBigEndian
-    SWAP32( savedReverbSize )
-    SWAP32( savedReverbWidth )
-    SWAP32( savedReverbDryMix )
-    SWAP32( savedReverbWetMix )
-    SWAP32( savedReverbFreeze )
-    SWAP32( savedReverbPlaybackRate )
-    SWAP32( savedBitResolution )
-    SWAP32( savedBitResolutionChain )
-    SWAP32( savedLFOBitResolution )
-    SWAP32( savedLFOBitResolutionDepth )
-    SWAP32( savedDecimator )
-    SWAP32( savedFilterCutoff )
-    SWAP32( savedFilterResonance )
-    SWAP32( savedLFOFilter )
-    SWAP32( savedLFOFilterDepth )
-#endif
+    // may fail as this was only added in version 1.0.3.1
+    int32 savedBypass = 0;
+    if ( streamer.readInt32( savedBypass ) != false ) {
+        _bypass = savedBypass;
+    }
 
     fReverbSize             = savedReverbSize;
     fReverbWidth            = savedReverbWidth;
@@ -433,57 +439,26 @@ tresult PLUGIN_API FogPad::setState( IBStream* state )
 //------------------------------------------------------------------------
 tresult PLUGIN_API FogPad::getState( IBStream* state )
 {
-    // here we need to save the model
+    // here we save the model values
 
-    float toSaveReverbSize            = fReverbSize;
-    float toSaveReverbWidth           = fReverbWidth;
-    float toSaveReverbDryMix          = fReverbDryMix;
-    float toSaveReverbWetMix          = fReverbWetMix;
-    float toSaveReverbFreeze          = fReverbFreeze;
-    float toSaveReverbPlaybackRate    = fReverbPlaybackRate;
-    float toSaveBitResolution         = fBitResolution;
-    float toSaveBitResolutionChain    = fBitResolutionChain;
-    float toSaveLFOBitResolution      = fLFOBitResolution;
-    float toSaveLFOBitResolutionDepth = fLFOBitResolutionDepth;
-    float toSaveDecimator             = fDecimator;
-    float toSaveFilterCutoff          = fFilterCutoff;
-    float toSaveFilterResonance       = fFilterResonance;
-    float toSaveLFOFilter             = fLFOFilter;
-    float toSaveLFOFilterDepth        = fLFOFilterDepth;
+    IBStreamer streamer( state, kLittleEndian );
 
-#if BYTEORDER == kBigEndian
-    SWAP32( toSaveReverbSize );
-    SWAP32( toSaveReverbWidth );
-    SWAP32( toSaveReverbDryMix );
-    SWAP32( toSaveReverbWetMix );
-    SWAP32( toSaveReverbFreeze );
-    SWAP32( toSaveReverbPlaybackRate );
-    SWAP32( toSaveBitResolution );
-    SWAP32( toSaveBitResolutionChain );
-    SWAP32( toSaveLFOBitResolution );
-    SWAP32( toSaveLFOBitResolutionDepth );
-    SWAP32( toSaveDecimator );
-    SWAP32( toSaveFilterCutoff );
-    SWAP32( toSaveFilterResonance );
-    SWAP32( toSaveLFOFilter );
-    SWAP32( toSaveLFOFilterDepth );
-#endif
-
-    state->write( &toSaveReverbSize            , sizeof( float ));
-    state->write( &toSaveReverbWidth           , sizeof( float ));
-    state->write( &toSaveReverbDryMix          , sizeof( float ));
-    state->write( &toSaveReverbWetMix          , sizeof( float ));
-    state->write( &toSaveReverbFreeze          , sizeof( float ));
-    state->write( &toSaveReverbPlaybackRate    , sizeof( float ));
-    state->write( &toSaveBitResolution         , sizeof( float ));
-    state->write( &toSaveBitResolutionChain    , sizeof( float ));
-    state->write( &toSaveLFOBitResolution      , sizeof( float ));
-    state->write( &toSaveLFOBitResolutionDepth , sizeof( float ));
-    state->write( &toSaveDecimator             , sizeof( float ));
-    state->write( &toSaveFilterCutoff          , sizeof( float ));
-    state->write( &toSaveFilterResonance       , sizeof( float ));
-    state->write( &toSaveLFOFilter             , sizeof( float ));
-    state->write( &toSaveLFOFilterDepth        , sizeof( float ));
+    streamer.writeFloat( fReverbSize );
+    streamer.writeFloat( fReverbWidth );
+    streamer.writeFloat( fReverbDryMix );
+    streamer.writeFloat( fReverbWetMix );
+    streamer.writeFloat( fReverbFreeze );
+    streamer.writeFloat( fReverbPlaybackRate );
+    streamer.writeFloat( fBitResolution );
+    streamer.writeFloat( fBitResolutionChain );
+    streamer.writeFloat( fLFOBitResolution );
+    streamer.writeFloat( fLFOBitResolutionDepth );
+    streamer.writeFloat( fDecimator );
+    streamer.writeFloat( fFilterCutoff );
+    streamer.writeFloat( fFilterResonance );
+    streamer.writeFloat( fLFOFilter );
+    streamer.writeFloat( fLFOFilterDepth );
+    streamer.writeInt32( _bypass ? 1 : 0 );
 
     return kResultOk;
 }
@@ -498,14 +473,6 @@ tresult PLUGIN_API FogPad::setupProcessing( ProcessSetup& newSetup )
 
     VST::SAMPLE_RATE = newSetup.sampleRate;
 
-    // spotted to fire multiple times...
-
-    if ( reverbProcess != nullptr )
-        delete reverbProcess;
-
-    // TODO: creating a bunch of extra channels for no apparent reason?
-    // get the correct channel amount and don't allocate more than necessary...
-    reverbProcess = new ReverbProcess( 6 );
 
     syncModel();
 

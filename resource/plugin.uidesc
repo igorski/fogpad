@@ -176,6 +176,7 @@
               wheel-inc-value="0.1" zoom-factor="1.5"
         />
 
+        <view class="CView" size="30, 10" origin="900, 477" bitmap="version" />
     </template>
     <variables/>
     <custom>
@@ -201,6 +202,7 @@
     </custom>
     <bitmaps>
         <bitmap name="background" path="background.png"/>
+        <bitmap name="version" path="version.png"/>
     </bitmaps>
 
     <!-- map the controllers listed above to their paramids by tag index -->
@@ -222,5 +224,6 @@
         <control-tag name="Unit1::ReverbFreeze"          tag="13" />
         <control-tag name="Unit1::ReverbDryMix"          tag="14" />
         <control-tag name="Unit1::ReverbWetMix"          tag="15" />
+        <control-tag name="Root::Bypass"                 tag="16" />
     </control-tags>
 </vstgui-ui-description>
