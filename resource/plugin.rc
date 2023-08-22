@@ -5,7 +5,7 @@
 
 plugin.uidesc       DATA "plugin.uidesc"
 background.png      PNG  "background.png"
-version             PNG  "version.png"
+version.png         PNG  "version.png"
 
 /////////////////////////////////////////////////////////////////////////////
 // Version
