@@ -64,7 +64,7 @@ The project uses [CMake](https://cmake.org) to generate the Makefiles and has be
 
 ### Environment setup
 
-Apart from requiring _CMake_ and a C(++) compiler such as _Clang_ or _MSVC_, the only other dependency is the [VST SDK from Steinberg](https://www.steinberg.net/en/company/developers.html) (the projects latest update requires SDK version 3.7.6).
+Apart from requiring _CMake_ and a C(++) compiler such as _Clang_ or _MSVC_, the only other dependency is the [VST SDK from Steinberg](https://www.steinberg.net/en/company/developers.html) (the projects latest update requires SDK version 3.7.10+).
 
 Be aware that prior to building the plugin, the Steinberg SDK needs to be built from source as well. Following Steinbergs guidelines, the build target should be a _/build_-subfolder of the _/vst3sdk_-folder.
 To generate a release build of the library, execute the following commands from the root of the Steinberg SDK folder:
