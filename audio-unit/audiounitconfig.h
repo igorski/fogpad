@@ -1,39 +1,56 @@
-#define PLATFORM_64 true
+// The specific variant of the Audio Unit app extension.
+// The four possible types and their values are:
+// Effect (aufx), Generator (augn), Instrument (aumu), and Music Effect (aufm)
+#define kAUcomponentType 'aufx'
+#define kAUcomponentType1 aufx
 
-#include "version.h"
+// A subtype code (unique ID) for the audio unit, such as gav3.
+// This value must be exactly 4 alphanumeric characters
+#define kAUcomponentSubType 'rvb2'
+#define kAUcomponentSubType1 rvb2
 
-// Check https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/AudioUnit.html for various types
+// A manufacturer code for the audio unit, such as Aaud.
+// This value must be exactly 4 alphanumeric characters
+#define kAUcomponentManufacturer 'IGOR'
+#define kAUcomponentManufacturer1 IGOR
 
-/* Bundle Identifier */
-#define kAudioUnitBundleIdentifier	nl.igorski.vst.fogpad.audiounit
+// A product name for the audio unit
+#define kAUcomponentDescription AUv3WrapperExtension
 
-/* Version Number (needs to be in hex) */
-#define kAudioUnitVersion			0x00010000
+// The full name of the audio unit.
+// This is derived from the manufacturer and description key values
+#define kAUcomponentName Igorski: FogPad
 
-/* Company Name + Effect Name */
-#define kAUPluginName 				igorski: FogPad
+// Displayed Tags
+#define kAUcomponentTag Effects
 
-/* A product name for the audio unit, such as TremoloUnit */
-#define kAUPluginDescription 		FogPad
+// A version number for the Audio Unit app extension (decimal value of hexadecimal representation with zeros between subversions)
+// Hexadecimal indexes representing: [0] = main version, [1] = 0 = dot, [2] = sub version, [3] = 0 = dot, [4] = sub-sub version,
+// e.g. 1.0.0 == 0x10000 == 65536, 1.2.3 = 0x10203 = 66051
+#define kAUcomponentVersion 65539
 
-/*
-  The specific variant of the Audio Unit. The four possible types and their values are:
-  Effect (aufx), Generator (augn), Instrument (aumu), and Music Effect (aufm).
- */
-#define kAUPluginType 				aufx
+// Supported number of channels of your audio unit.
+// Integer indexes representing: [0] = input count, [1] = output count, [2] = 2nd input count,
+// [3]=2nd output count, etc.
+// e.g. 1122 == config1: [mono input, mono output], config2: [stereo input, stereo output]
+// see channelCapabilities for discussion
+#define kSupportedNumChannels 1122
 
-/* A subtype code for the audio unit, such as tmlo. This value must be exactly 4 alphanumeric characters. */
-#define kAUPluginSubType 			rvb2
+// The preview audio file name.
+// To add your own custom audio file (for standalone effects), add an audio file to the project (AUv3WrappermacOS and AUv3WrapperiOS targets) and
+// enter the file name here
+// #define kAudioFileName "drumLoop"
 
-/* A manufacturer code for the audio unit, such as Aaud. This value must be exactly 4 alphanumeric characters.
- * Manufacturer OSType should have at least one non-lower case character */
-#define kAUPluginManufacturer 		IGOR
+// The preview audio file format.
+// To add your own custom audio file (for standalone effects), add an audio file to the project (AUv3WrappermacOS and AUv3WrapperiOS targets) and
+// enter the file format here
+// #define kAudioFileFormat "wav"
 
-// Definitions for the resource file
-#define kAudioUnitName				"igorski: FogPad" // same as kAUPluginName
-#define kAudioUnitDescription	    "FogPad" // same as kAUPluginDescription
-#define kAudioUnitType				'aufx' // same as kAUPluginType
-#define kAudioUnitComponentSubType	'rvb2' // same as kAUPluginSubType
-#define kAudioUnitComponentManuf    'IGOR' // same as kAUPluginManufacturer
+// componentFlags (leave at 0)
+#define kAUcomponentFlags 0
 
-#define kAudioUnitCarbonView		1		// if 0 no Carbon view support will be added
+// componentFlagsMask (leave at 0)
+#define kAUcomponentFlagsMask 0
+
+// class name for the application delegate
+#define kAUapplicationDelegateClassName AppDelegate

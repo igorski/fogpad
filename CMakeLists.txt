@@ -11,7 +11,7 @@ set(CMAKE_COLOR_MAKEFILE ON)
 project(Fogpad)
 set(PROJECT_VERSION 1)
 set(target fogpad)
-set(copyright "igorski.nl 2019-2023")
+set(copyright "igorski.nl 2019-2024")
 set(major_version 1)
 set(minor_version 0)
 set(release_number 3)
@@ -158,50 +158,6 @@ set(vst_resources
     "resource/version.png"
 )
 set(vst_ui_descr "resource/plugin.uidesc")
-
-##############
-# Audio Unit #
-##############
-
-if (JAMBA_ENABLE_AUDIO_UNIT)
-    set(JAMBA_TEST_CASES_DIR "${JAMBA_ROOT}/test/cpp")
-    set(JAMBA_TEST_CASES_SOURCES
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/Utils/Collection/test-CircularBuffer.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/Utils/Concurrent/test-concurrent.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/Utils/Concurrent/test-concurrent_lockfree.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/Utils/test-Lerp.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/Utils/test-StringUtils.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/VST/GUI/Params/test-GUIParameters.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/VST/GUI/Params/test-ParamAware.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/VST/GUI/Views/test-CustomViewCreator.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/VST/GUI/Views/test-SelfContainedViewListener.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/VST/test-AudioBuffers.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/VST/test-AudioUtils.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/VST/test-ParamConverters.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/VST/test-SampleRateBasedClock.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/VST/Utils/test-Utils.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/VST/Utils/test-FastWriteMemoryStream.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/VST/Utils/test-ReadOnlyMemoryStream.cpp
-    )
-
-    include(jamba.cmake)
-    set(CPP_SOURCES src)
-
-    configure_file(${CPP_SOURCES}/version.h ${CMAKE_BINARY_DIR}/generated/version.h)
-    include_directories(${CMAKE_BINARY_DIR}/generated/)
-
-    jamba_add_vst_plugin(
-        TARGET              "${target}"
-        RELEASE_FILENAME    "${target}.component"
-        TARGETS_PREFIX      "jmb_"
-        VST_SOURCES         "${vst_sources}"
-        UIDESC              "${vst_ui_descr}"
-        RESOURCES           "${vst_resources}"
-        TEST_CASE_SOURCES   "${JAMBA_TEST_CASES_SOURCES}"
-        TEST_LINK_LIBRARIES "jamba"
-    )
-
-else()
 
 #######
 # VST #
@@ -351,8 +307,6 @@ if (SMTG_CREATE_VST2_VERSION)
     if (WIN)
         add_definitions(-D_CRT_SECURE_NO_WARNINGS)
     endif()
-endif()
-
 endif()
 
 ######################

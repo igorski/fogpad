@@ -21,11 +21,8 @@ if [ -n "${VST3_SDK_ROOT}" ]; then
   DVST3_SDK_ROOT="-DVST3_SDK_ROOT=${VST3_SDK_ROOT}"
 fi
 
-cmake -GXcode ${DVST3_SDK_ROOT} -DJAMBA_ENABLE_AUDIO_UNIT=ON ${BASEDIR}
-
-# build Audio Unit using Jamba in Release mode
-
-sh jamba.sh build-au -r
-sh jamba.sh install-au
+# run CMake using Audio Unit build target
+cmake -GXcode ${DVST3_SDK_ROOT} "-DCMAKE_OSX_ARCHITECTURES=\"arm64,x86_64\"" "-DCREATE_AUDIO_UNIT=ON" "${BASEDIR}/audio-unit"
+cmake --build . --config Release
 
 cd ..
