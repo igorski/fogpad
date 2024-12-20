@@ -292,13 +292,13 @@ endif()
 ######################
 
 if(APPLE)
-    install(TARGETS ${target}
-        DESTINATION "$ENV{HOME}/Library/Audio/Plug-Ins/VST"
-    )
     if (SMTG_CREATE_AU_VERSION)
         add_subdirectory(audio-unit)
         create_audio_unit(${target})
     endif()
+    install(TARGETS ${target}
+        DESTINATION "$ENV{HOME}/Library/Audio/Plug-Ins/VST"
+    )
 elseif(WIN32)
     install(TARGETS ${target}
         DESTINATION "C:/Program Files (x86)/Common Files/VST3/"

@@ -37,9 +37,17 @@ fi
 
 if [ "$1" == "au" ]; then
     FLAGS="-GXcode -DSMTG_CREATE_AU_VERSION=ON"
+    if [ "$#" -ne 3 ]; then
+        echo "Incorrect argument count, usage: build.sh au APPLE_DEVELOPMENT_TEAM_ID APPLE_SIGNING_IDENTITY_NAME"
+        exit
+    fi
+    TEAM="$2"
+    ID="$3"
+    cmake "-DCMAKE_OSX_ARCHITECTURES=x86_64;arm64" -DVST3_SDK_ROOT=${DVST3_SDK_ROOT} ${FLAGS} "-DSMTG_IOS_DEVELOPMENT_TEAM=${TEAM}" "-DSMTG_CODE_SIGN_IDENTITY_MAC=${ID}" ..
+else
+    cmake "-DCMAKE_OSX_ARCHITECTURES=x86_64;arm64" -DVST3_SDK_ROOT=${DVST3_SDK_ROOT} ${FLAGS} ..    
 fi
 
-cmake "-DCMAKE_OSX_ARCHITECTURES=x86_64;arm64" -DVST3_SDK_ROOT=${DVST3_SDK_ROOT} ${FLAGS} ..
 cmake --build . --config Release
 
 buildStatus=$?

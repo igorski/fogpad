@@ -2,7 +2,7 @@
 clear
 
 echo "Retrieving Steinberg VST3 SDK..."
-#git clone --recursive https://github.com/steinbergmedia/vst3sdk.git --branch v3.7.11_build_10
+git clone --recursive https://github.com/steinbergmedia/vst3sdk.git --branch v3.7.11_build_10
 
 echo "--------------------------------"
 echo "Setting up Steinberg VST3 SDK..."

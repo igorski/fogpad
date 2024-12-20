@@ -157,12 +157,16 @@ replace the value for `SMTG_COREAUDIO_SDK_PATH` with the actual installation loc
 sh setup.sh mac /path/to/CoreAudioUtilityClasses/CoreAudio
 ```
 
-Now execute the following command to build the plugin as an Audio Unit:
-
-* Run _sh build.sh_ from the repository root as before, but supplying the "au" suffix:
+You will need to have your code signing set up appropriately. Assuming you have set up your Apple Developer account appropriately, you can find your sign identity like so:
 
 ```
-sh build.sh au
+security find-identity -p codesigning -v 
+```
+
+From which you can take your name and team id and pass them to the build script like so:
+
+```
+sh build.sh au TEAM_ID "YOUR_NAME"
 ```
 
 The subsequent Audio Unit component will be located in _./build/VST3/fogpad.component_ as well as linked
