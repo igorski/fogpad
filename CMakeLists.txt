@@ -64,24 +64,23 @@ endif()
 
 list(APPEND CMAKE_MODULE_PATH "${VST3_SDK_ROOT}/cmake/modules")
 
-include(SMTG_Global)
+# include(SMTG_AAXSupport)
 include(SMTG_AddVST3Library)
+include(SMTG_AddVST3Options)
 include(SMTG_Bundle)
+include(SMTG_CoreAudioSupport)
 include(SMTG_ExportedSymbols)
-include(SMTG_PrefixHeader)
+include(SMTG_Global)
 include(SMTG_PlatformIOS)
 include(SMTG_PlatformToolset)
-include(SMTG_CoreAudioSupport)
-include(SMTG_AAXSupport)
-include(SMTG_VstGuiSupport)
+include(SMTG_PrefixHeader)
 include(SMTG_UniversalBinary)
-include(SMTG_AddVST3Options)
+include(SMTG_VstGuiSupport)
 
 #########################
 # Steinberg VST sources #
 #########################
 
-set(VSTSDK_INCLUDE_DIR ${VST3_SDK_ROOT})
 set(VSTSDK_PLUGIN_SOURCE
     ${VST3_SDK_ROOT}/public.sdk/source/common/commoniids.cpp
     ${VST3_SDK_ROOT}/public.sdk/source/vst/vstaudioeffect.cpp
@@ -167,8 +166,8 @@ smtg_add_vst3plugin(${target} ${vst_sources})
 
 ## include Steinberg libraries
 
-set(steinberg_libs "base" "pluginterfaces" "sdk" "vstgui_support" "vstgui_uidescription" "vstgui")
-include_directories(${VSTSDK_INCLUDE_DIR})
+set(steinberg_libs "base" "pluginterfaces" "sdk" "vstgui" "vstgui_support" "vstgui_uidescription")
+include_directories(${VST3_SDK_ROOT})
 foreach(lib IN ITEMS ${steinberg_libs})
     if(UNIX)
         target_link_libraries(${target} PRIVATE ${VST3_SDK_ROOT}/build/lib/Release/lib${lib}.a)
@@ -191,32 +190,9 @@ target_sources(${target} PRIVATE
 IF (APPLE)
     target_sources (${target} PRIVATE
         ${VST3_SDK_ROOT}/public.sdk/source/main/macmain.cpp
-        ${VST3_SDK_ROOT}/vstgui4/vstgui/vstgui_mac.mm
     )
     if(XCODE)
-        if(SMTG_IOS_DEVELOPMENT_TEAM)
-            ## iOS plugin
-            set(target ${target}_ios)
-            smtg_add_ios_vst3plugin("${SMTG_CODE_SIGN_IDENTITY_IOS}" ${target} "${target}" "${vst_sources}")
-            set_target_properties(${target} PROPERTIES ${SDK_IDE_PLUGIN_EXAMPLES_FOLDER})
-            target_link_libraries(${target} PRIVATE
-                base_ios
-                sdk_ios
-                "-framework UIKit"
-                "-framework CoreGraphics"
-                "-framework QuartzCore"
-                "-framework CoreText"
-                "-framework Accelerate"
-                "-framework ImageIO"
-                "-framework MobileCoreServices"
-            )
-            target_sources(${target} PRIVATE
-                ${VST3_SDK_ROOT}/vstgui4/vstgui/vstgui_ios.mm
-            )
-        else()
-            ## macOS plugin
-            target_link_libraries(${target} PRIVATE "-framework Cocoa" "-framework OpenGL" "-framework Accelerate" "-framework QuartzCore" "-framework Carbon")
-        endif()
+        target_link_libraries(${target} PRIVATE "-framework Cocoa" "-framework OpenGL" "-framework Accelerate" "-framework QuartzCore" "-framework Carbon")
     else()
         find_library(COREFOUNDATION_FRAMEWORK CoreFoundation)
         find_library(COCOA_FRAMEWORK Cocoa)
@@ -291,9 +267,11 @@ smtg_target_add_plugin_resources(${target}
 )
 
 if(APPLE)
-    smtg_target_set_bundle(${target} INFOPLIST "${CMAKE_CURRENT_SOURCE_DIR}/mac/Info.plist" PREPROCESS)
-    # adding PkgInfo at root level makes plugin appear as a file instead of folder
-    smtg_target_add_plugin_resources(${target} RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/mac/PkgInfo" OUTPUT_SUBDIRECTORY "../")
+    if (NOT SMTG_CREATE_AU_VERSION)
+        smtg_target_set_bundle(${target} INFOPLIST "${CMAKE_CURRENT_SOURCE_DIR}/mac/Info.plist" PREPROCESS)
+        # adding PkgInfo at root level makes plugin appear as a file instead of folder
+        smtg_target_add_plugin_resources(${target} RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/mac/PkgInfo" OUTPUT_SUBDIRECTORY "../")
+    endif()
 elseif(WIN)
     target_sources(${target} PRIVATE resource/plugin.rc)
 endif()
@@ -314,19 +292,23 @@ endif()
 ######################
 
 if(APPLE)
-  install(TARGETS ${target}
-    DESTINATION "$ENV{HOME}/Library/Audio/Plug-Ins/VST"
-  )
+    install(TARGETS ${target}
+        DESTINATION "$ENV{HOME}/Library/Audio/Plug-Ins/VST"
+    )
+    if (SMTG_CREATE_AU_VERSION)
+        add_subdirectory(audio-unit)
+        create_audio_unit(${target})
+    endif()
 elseif(WIN32)
-  install(TARGETS ${target}
-    DESTINATION "C:/Program Files (x86)/Common Files/VST3/"
-  )
+    install(TARGETS ${target}
+        DESTINATION "C:/Program Files (x86)/Common Files/VST3/"
+    )
 elseif(WIN)
-  install(TARGETS ${target}
-    DESTINATION "C:/Program Files/Common Files/VST3/"
-  )
+    install(TARGETS ${target}
+        DESTINATION "C:/Program Files/Common Files/VST3/"
+    )
 elseif(LINUX)
-  install(TARGETS ${target}
-    DESTINATION "/usr/lib/lxvst"
-  )
+    install(TARGETS ${target}
+        DESTINATION "/usr/lib/lxvst"
+    )
 endif()
