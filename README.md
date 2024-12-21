@@ -18,7 +18,7 @@ Be aware that prior to building the plugin, the Steinberg SDK needs to be built 
 
 You can instantly retrieve and build the SDK using the following commands.
 
-Unix:
+##### Unix:
 
 ```
 sh setup.sh --platform PLATFORM
@@ -26,7 +26,7 @@ sh setup.sh --platform PLATFORM
 
 Where optional flag _--platform_ can be either `mac` or `linux` (defaults to linux).
 
-Windows:
+##### Windows:
 
 ```
 setup.bat
