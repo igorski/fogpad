@@ -67,16 +67,26 @@ cmake --build . --config Release
 buildStatus=$?
 
 if [ $buildStatus -eq 0 ]; then
-    if [ "$type" == "vst2" ]; then
-        mv ./VST3/fogpad.vst3 ./VST3/fogpad.vst
-    elif [ "$type" == "au" ]; then
-        if [ "$identity" ]; then
-            codesign -s "${identity}" ~/Library/Audio/Plug-Ins/Components/fogpad.component --timestamp --deep --strict --options=runtime --force
-            codesign --verify --deep --verbose ~/Library/Audio/Plug-Ins/Components/fogpad.component
+    FILE="./VST3/fogpad.vst3"
+
+    # code signing (macOS)
+    
+    if [ "$identity" ]; then
+        if [ "$type" == "au" ]; then
+            FILE="~/Library/Audio/Plug-Ins/Components/fogpad.component"
         fi
+        codesign -s "${identity}" "${FILE}" --timestamp --deep --strict --options=runtime --force
+        codesign --verify --deep --verbose "${FILE}"
+    fi
+
+    # VST2/AU specific operations
+
+    if [ "$type" == "vst2" ]; then
+        mv "${FILE}" ./VST3/fogpad.vst
+    elif [ "$type" == "au" ]; then
         killall -9 AudioComponentRegistrar
         auval -v aufx rvb2 IGOR 
-    fi  
+    fi
     echo "Plugin built successfully"
 else
     echo "An error occurred during build of plugin"
