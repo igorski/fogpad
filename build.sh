@@ -51,7 +51,7 @@ if [ "$type" == "vst2" ]; then
 elif [ "$type" == "au" ]; then
     if [ -z "$coresdk" ]; then
         echo "Path to CoreAudio SDK not supplied, usage: build.sh --type au --coresdk PATH_TO_CORE_AUDIO_SDK"
-        exit
+        exit 1
     fi
     FLAGS="-GXcode -DSMTG_CREATE_AU_VERSION=ON -DSMTG_COREAUDIO_SDK_PATH=$coresdk"
 fi
