@@ -97,7 +97,7 @@ _*As mentioned in the "setup" section, VST2 builds are not supported out-of-the-
 
 ### Compiling for both 32-bit and 64-bit architectures
 
-Depending on your host software having 32-bit or 64-bit support (either Intel or M1), you can best compile for a wider range of architectures. To do so, updating the build shell scripts/batch files to contain the following:
+Depending on your host software having 32-bit or 64-bit support (the latter for either Intel or ARM), you can best compile for a wider range of architectures. To do so, updating the build shell scripts/batch files to contain the following:
 
 **macOS:**
 
@@ -105,8 +105,8 @@ Depending on your host software having 32-bit or 64-bit support (either Intel or
 cmake -"DCMAKE_OSX_ARCHITECTURES=x86_64;arm64;i1386" ..
 ```
 
-Which will allow you to compile a single, "fat" binary that supports all architectures (Intel, M1 and legacy 32-bit Intel). Note
-that by default compilation is for 64-bit architecture for both Intel and ARM CPU's.
+Which will allow you to compile a single, "fat" binary that supports all architectures (Intel, ARM and legacy 32-bit Intel). Note
+that by default compilation is for 64-bit architecture for both Intel and ARM CPU's, _you can likely ignore this section_.
 
 **Windows:**
 
@@ -124,18 +124,7 @@ Note that the above also needs to be done when building the Steinberg SDK (which
 
 While macOS has been fully 64-bit for the past versions, building for 32-bit provides the best backward
 compatibility for older OS versions. And musicians are known to keep working systems at the cost of not
-running an up to date system...
-
-### Running the plugin
-
-You can copy the build output into your system VST(3) folder and run it directly in a VST host / DAW of your choice.
-
-When debugging, you can also choose to run the plugin against Steinbergs validator and editor host utilities:
-
-```
-{VST3_SDK_ROOT}/build/bin/validator  build/VST3/fogpad.vst3
-{VST3_SDK_ROOT}/build/bin/editorhost build/VST3/fogpad.vst3
-```
+running an up to date system... _still, you can likely ignore this section_.
 
 ### Build as Audio Unit (macOS only)
 
@@ -159,7 +148,18 @@ You can validate the Audio Unit using Apple's _auval_ utility, by running _auval
 
 In case of errors you can look for instances of [kAudioUnitErr](https://www.osstatus.com/search/results?platform=all&framework=all&search=kaudiouniterr)
 
-#### Signing the plugin on macOS
+### Running the plugin
+
+You can copy the build output into your system VST(3) folder and run it directly in a VST host / DAW of your choice.
+
+When debugging, you can also choose to run the plugin against Steinbergs validator and editor host utilities:
+
+```
+{VST3_SDK_ROOT}/build/bin/validator  build/VST3/fogpad.vst3
+{VST3_SDK_ROOT}/build/bin/editorhost build/VST3/fogpad.vst3
+```
+
+### Signing the plugin on macOS
 
 You will need to have your code signing set up appropriately. Assuming you have set up your Apple Developer account appropriately, you can find your sign identity like so:
 
