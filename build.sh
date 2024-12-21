@@ -29,33 +29,54 @@ fi
 
 echo "Building using VST3 SDK located at ${DVST3_SDK_ROOT}"
 
+type="vst3"
+
+# Parse arguments
+
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --type) type="$2"; shift ;;
+        --team_id) team_id="$2"; shift ;;
+        --identity) identity="$2"; shift ;;
+        --coresdk) coresdk="$2"; shift ;;
+        *) echo "Unknown parameter passed: $1"; exit 1 ;;
+    esac
+    shift
+done
+
 # flag to build as VST2 supplied ? pass it to CMake configuration
 
-if [ "$1" == "vst2" ]; then
+if [ "$type" == "vst2" ]; then
     FLAGS="-DSMTG_CREATE_VST2_VERSION=ON"
-fi
-
-if [ "$1" == "au" ]; then
-    FLAGS="-GXcode -DSMTG_CREATE_AU_VERSION=ON"
-    if [ "$#" -ne 3 ]; then
-        echo "Incorrect argument count, usage: build.sh au APPLE_DEVELOPMENT_TEAM_ID APPLE_SIGNING_IDENTITY_NAME"
+elif [ "$type" == "au" ]; then
+    if [ -z "$coresdk" ]; then
+        echo "Path to CoreAudio SDK not supplied, usage: build.sh --type au --coresdk PATH_TO_CORE_AUDIO_SDK"
         exit
     fi
-    TEAM="$2"
-    ID="$3"
-    cmake "-DCMAKE_OSX_ARCHITECTURES=x86_64;arm64" -DVST3_SDK_ROOT=${DVST3_SDK_ROOT} ${FLAGS} "-DSMTG_IOS_DEVELOPMENT_TEAM=${TEAM}" "-DSMTG_CODE_SIGN_IDENTITY_MAC=${ID}" ..
-else
-    cmake "-DCMAKE_OSX_ARCHITECTURES=x86_64;arm64" -DVST3_SDK_ROOT=${DVST3_SDK_ROOT} ${FLAGS} ..    
+    FLAGS="-GXcode -DSMTG_CREATE_AU_VERSION=ON -DSMTG_COREAUDIO_SDK_PATH=$coresdk"
 fi
 
+if [ -z "$identity" ]; then
+    cmake "-DCMAKE_OSX_ARCHITECTURES=x86_64;arm64" -DVST3_SDK_ROOT=${DVST3_SDK_ROOT} ${FLAGS} ..
+else
+    echo "Plugin will be signed using ${identity}"
+    cmake "-DCMAKE_OSX_ARCHITECTURES=x86_64;arm64" -DVST3_SDK_ROOT=${DVST3_SDK_ROOT} ${FLAGS} -DSMTG_IOS_DEVELOPMENT_TEAM=${team_id} "-DSMTG_CODE_SIGN_IDENTITY_MAC=${identity}" ..
+fi
 cmake --build . --config Release
 
 buildStatus=$?
 
 if [ $buildStatus -eq 0 ]; then
-    if [ "$1" == "vst2" ]; then
+    if [ "$type" == "vst2" ]; then
         mv ./VST3/fogpad.vst3 ./VST3/fogpad.vst
-    fi
+    elif [ "$type" == "au" ]; then
+        if [ "$identity" ]; then
+            codesign -s "${identity}" ~/Library/Audio/Plug-Ins/Components/fogpad.component --timestamp --deep --strict --options=runtime --force
+            codesign --verify --deep --verbose ~/Library/Audio/Plug-Ins/Components/fogpad.component
+        fi
+        killall -9 AudioComponentRegistrar
+        auval -v aufx rvb2 IGOR 
+    fi  
     echo "Plugin built successfully"
 else
     echo "An error occurred during build of plugin"

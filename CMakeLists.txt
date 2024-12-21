@@ -151,7 +151,6 @@ if(SMTG_CREATE_VST2_VERSION)
     endif()
 endif()
 
-
 set(vst_resources
     "resource/background.png"
     "resource/version.png"
@@ -163,6 +162,7 @@ set(vst_ui_descr "resource/plugin.uidesc")
 #######
 
 smtg_add_vst3plugin(${target} ${vst_sources})
+smtg_target_configure_version_file(${target})
 
 ## include Steinberg libraries
 
@@ -254,7 +254,7 @@ endif()
 ## Include Windows specific libraries
 
 if(WIN)
-    target_sources (${target} PRIVATE
+    target_sources(${target} PRIVATE
         ${VST3_SDK_ROOT}/public.sdk/source/main/dllmain.cpp
 #        ${VST3_SDK_ROOT}/vstgui4/vstgui/vstgui_win32.cpp
     )
@@ -267,11 +267,35 @@ smtg_target_add_plugin_resources(${target}
 )
 
 if(APPLE)
-    if (NOT SMTG_CREATE_AU_VERSION)
+    ##############
+    # Audio Unit #
+    ##############
+    if (XCODE AND SMTG_CREATE_AU_VERSION)
+        message(STATUS "SMTG_CREATE_AU_VERSION is set. An Audio Unit version of the plug-in will be created.")
+        set(public_sdk_SOURCE_DIR ${VST3_SDK_ROOT}/public.sdk)
+        include(SMTG_AddVST3AuV2)
+        smtg_target_add_auv2(${target}-au
+            BUNDLE_NAME fogpad
+            BUNDLE_IDENTIFIER nl.igorski.fogpad.audiounit
+            INFO_PLIST_TEMPLATE ${CMAKE_CURRENT_SOURCE_DIR}/mac/au-info.plist
+            VST3_PLUGIN_TARGET fogpad
+        )
+        # exposes Steinberg libs to the Audio Unit target
+        target_link_directories(${target}-au PRIVATE "${VST3_SDK_ROOT}/build/lib")
+        target_link_libraries(${target}-au
+            PUBLIC
+                ${steinberg_libs}
+                sdk_common
+        )
+    else()
         smtg_target_set_bundle(${target} INFOPLIST "${CMAKE_CURRENT_SOURCE_DIR}/mac/Info.plist" PREPROCESS)
         # adding PkgInfo at root level makes plugin appear as a file instead of folder
         smtg_target_add_plugin_resources(${target} RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/mac/PkgInfo" OUTPUT_SUBDIRECTORY "../")
     endif()
+    smtg_target_set_bundle(${target}
+        BUNDLE_IDENTIFIER "nl.igorski.${target}"
+        COMPANY_NAME "igorski.nl"
+    )
 elseif(WIN)
     target_sources(${target} PRIVATE resource/plugin.rc)
 endif()
@@ -292,10 +316,6 @@ endif()
 ######################
 
 if(APPLE)
-    if (SMTG_CREATE_AU_VERSION)
-        add_subdirectory(audio-unit)
-        create_audio_unit(${target})
-    endif()
     install(TARGETS ${target}
         DESTINATION "$ENV{HOME}/Library/Audio/Plug-Ins/VST"
     )

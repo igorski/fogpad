@@ -6,20 +6,6 @@ If you require some inspiration, it is used pretty much all over the [Moult](htt
 
 ## On compatibility
 
-### Build as VST 2.4
-
-VST3 is great and all, but support across DAW's is poor (looking at a certain popular German product). You can however build as a VST2.4 plugin and enjoy it on a wider range of host platforms.
-
-However: as of SDK 3.6.11, Steinberg no longer packages the required _./pluginterfaces/vst2.x_-folder inside the vst3sdk folder.
-If you wish to build a VST2 plugin, copying the folder from an older SDK version _could_ work (verified 3.6.9. _vst2.x_ folders to work with SDK 3.7.6), though be aware
-that you _need a license to target VST2_. You can view [Steinbergs rationale on this decision here](https://www.steinberg.net/en/newsandevents/news/newsdetail/article/vst-2-coming-to-an-end-4727.html).
-
-Once your SDK is "setup" for VST2 you can pass "vst2" as an argument to the build.sh and build.bat files, e.g.:
-
-```
-sh build.sh vst2
-```
-
 ### Compiling for both 32-bit and 64-bit architectures
 
 Depending on your host software having 32-bit or 64-bit support (either Intel or M1), you can best compile for a wider range of architectures. To do so, updating the build shell scripts/batch files to contain the following:
@@ -65,17 +51,13 @@ Be aware that prior to building the plugin, the Steinberg SDK needs to be built 
 
 You can retrieve and build the SDK using the following commands.
 
-macOS:
+Unix:
 
 ```
-sh setup.sh mac
+sh setup.sh --platform PLATFORM
 ```
 
-Linux:
-
-```
-sh setup.sh
-```
+Where optional flag _--platform_ can be either `mac` or `linux` (defaults to linux).
 
 Windows:
 
@@ -87,14 +69,14 @@ This will create a (Git ignored) subfolder in this repository folder with a preb
 
 #### The flexible way : pointing towards an external SDK build / supporting VST2
 
-If you wish to use a different SDK version (or wish to reuse an existing build elsewhere on your computer), you can invoke all
-build scripts by providing the `VST3_SDK_ROOT` environment variable, like so:
+If you wish to use a different SDK version (or wish to reuse an existing build elsewhere on your computer, for instance to
+target VST2.4 builds), you can invoke all build scripts by providing the `VST3_SDK_ROOT` environment variable, like so:
 
 ```
 VST3_SDK_ROOT=/path/to/prebuilt/VST3_SDK sh build.sh
 ```
 
-To generate a release build of the SDK, execute the following commands from the root of the Steinberg SDK folder:
+To first generate a release build of the SDK, execute the following commands from the root of the Steinberg SDK folder:
 
 ```
 cd vst3sdk
@@ -106,7 +88,9 @@ cmake --build . --config Release
 
 The result being that _{VST3_SDK_ROOT}/build/lib/Release/_ will contain the Steinberg VST libraries required to build the plugin.
 
-If you intend to build VST2 versions as well, run the following from the root of the Steinberg SDK folder (run the _.bat_ version instead of the _.sh_ version on Windows) prior to building the library:
+In case you intend to build VST2 versions as well keep in mind that as of SDK 3.6.11, Steinberg no longer packages the required _./pluginterfaces/vst2.x_-folder inside the vst3sdk folder. If you wish to build a VST2 plugin, copying the folder from an older SDK version _could_ work (verified 3.6.9. _vst2.x_ folders to work with SDK 3.7.11), though be aware that you _need a license to target VST2_. You can view [Steinbergs rationale on this decision here](https://www.steinberg.net/en/newsandevents/news/newsdetail/article/vst-2-coming-to-an-end-4727.html).
+
+To prepare for building VST2 versions of the plugin, run the following from the root of the Steinberg SDK folder (run the _.bat_ version instead of the _.sh_ version on Windows) prior to building the library:
 
 ```
 ./copy_vst2_to_vst3_sdk.sh
@@ -120,13 +104,15 @@ And if you are running Linux, you can easily resolve all dependencies by first r
 
 ### Building the plugin
 
-See the provided sheel scripts. The build output will be stored in _./build/VST3/fogpad.vst3_ as well as symbolically linked to your systems VST-plugin folder (on Unix).
+See the provided shell scripts. The build output will be stored in _./build/VST3/fogpad.vst3_ as well as symbolically linked to your systems VST-plugin folder (on Unix).
 
 #### Compiling on Unix systems:
 
 ```
-sh build.sh
+sh build.sh --type=TYPE
 ```
+
+Where optional flag _--type_ can be either `vst3` or `vst2` (defaults to vst3).
 
 #### Compiling on Windows:
 
@@ -135,6 +121,8 @@ Assuming the Visual Studio Build Tools have been installed:
 ```
 build.bat
 ```
+
+Where you can optionally append `vst2` to build a vst plugin.
 
 ### Running the plugin
 
@@ -149,13 +137,27 @@ When debugging, you can also choose to run the plugin against Steinbergs validat
 
 ### Build as Audio Unit (macOS only)
 
-For this you will need a little extra preparation while building Steinberg SDK. Additionally, you will need the
+For this you will need a little extra preparation while building Steinberg SDK as you will need the
 "[CoreAudio SDK](https://developer.apple.com/library/archive/samplecode/CoreAudioUtilityClasses/Introduction/Intro.html)" and XCode. Execute the following instructions to build the SDK with Audio Unit support,
 replace the value for `SMTG_COREAUDIO_SDK_PATH` with the actual installation location of the CoreAudio SDK:
 
 ```
-sh setup.sh mac /path/to/CoreAudioUtilityClasses/CoreAudio
+sh setup.sh --platform mac --coresdk /path/to/CoreAudioUtilityClasses/CoreAudio
 ```
+
+After which you can run the build script like so:
+
+```
+sh build.sh --type au --coresdk /path/to/CoreAudioUtilityClasses/CoreAudio
+```
+
+The subsequent Audio Unit component will be located in `~/Library/Audio/Plug-Ins/Componentsfogpad.component`
+
+You can validate the Audio Unit using Apple's _auval_ utility, by running _auval -v aufx rvb2 IGOR_ on the command line. Note that there is the curious behaviour that you might need to reboot before the plugin shows up, though you can force a flush of the Audio Unit cache at runtime by running _killall -9 AudioComponentRegistrar_.
+
+In case of errors you can look for instances of [kAudioUnitErr](https://www.osstatus.com/search/results?platform=all&framework=all&search=kaudiouniterr)
+
+#### Signing the plugin on macOS
 
 You will need to have your code signing set up appropriately. Assuming you have set up your Apple Developer account appropriately, you can find your sign identity like so:
 
@@ -166,14 +168,5 @@ security find-identity -p codesigning -v
 From which you can take your name and team id and pass them to the build script like so:
 
 ```
-sh build.sh au TEAM_ID "YOUR_NAME"
+sh build.sh --team_id TEAM_ID --identity "YOUR_NAME"
 ```
-
-The subsequent Audio Unit component will be located in _./build/VST3/fogpad.component_ as well as linked
-in _~/Library/Audio/Plug-Ins/Components/_
-
-You can validate the Audio Unit using Apple's _auval_ utility, by running _auval -v aufx rvb2 IGOR_ on the command line. Note that there is the curious behaviour that you might need to reboot before the plugin shows up, though you can force a flush of the Audio Unit cache at runtime by running _killall -9 AudioComponentRegistrar_.
-
-#### Signing Audio Units
-
-Codesign the .vst3 file inside the `Resources` folder (or take a presigned .vst3 build). Then codesign the .component separately.
