@@ -273,6 +273,7 @@ if(APPLE)
     if (XCODE AND SMTG_CREATE_AU_VERSION)
         message(STATUS "SMTG_CREATE_AU_VERSION is set. An Audio Unit version of the plug-in will be created.")
         set(public_sdk_SOURCE_DIR ${VST3_SDK_ROOT}/public.sdk)
+        set(SMTG_ENABLE_AUV2_BUILDS true)
         include(SMTG_AddVST3AuV2)
         smtg_target_add_auv2(${target}-au
             BUNDLE_NAME fogpad
