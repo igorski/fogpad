@@ -169,8 +169,7 @@ From which you can take your name and team id and pass them to the build script 
 sh build.sh au TEAM_ID "YOUR_NAME"
 ```
 
-The subsequent Audio Unit component will be located in _./build/VST3/fogpad.component_ as well as linked
-in _~/Library/Audio/Plug-Ins/Components/_
+The subsequent Audio Unit component will be located in _./build/bin/Release/Fogpad\ AUV3.app_.
 
 You can validate the Audio Unit using Apple's _auval_ utility, by running _auval -v aufx rvb2 IGOR_ on the command line. Note that there is the curious behaviour that you might need to reboot before the plugin shows up, though you can force a flush of the Audio Unit cache at runtime by running _killall -9 AudioComponentRegistrar_.
 

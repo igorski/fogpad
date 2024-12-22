@@ -35,16 +35,18 @@ if(MSVC)
 endif()
 
 if(UNIX)
-    if(XCODE)
-       set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++17")
-       set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
-    elseif(APPLE)
-       set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
-       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -stdlib=libc++")
-       link_libraries(c++)
-       # support Yosemite and up
-       set(CMAKE_OSX_SYSROOT macosx10.13)
-       set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13")
+    if(APPLE)
+        if (XCODE)
+            set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++17")
+            set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
+        else()
+            set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -stdlib=libc++")
+            link_libraries(c++)
+        endif()
+        # support Yosemite and up
+        set(CMAKE_OSX_SYSROOT macosx10.13)
+        set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13")
     else()
         set(LINUX true)
         add_definitions( -D__cdecl= )
@@ -208,7 +210,7 @@ IF (APPLE)
         BUNDLE_EXTENSION "vst3"
         XCODE_ATTRIBUTE_WRAPPER_EXTENSION "vst3"
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/mac/Info.plist"
-        MACOSX_BUNDLE_BUNDLE_NAME "${project}"
+        MACOSX_BUNDLE_BUNDLE_NAME "${target}"
         MACOSX_BUNDLE_GUI_IDENTIFIER "nl.igorski.vst.${target}"
         MACOSX_BUNDLE_ICON_FILE ""
         MACOSX_BUNDLE_SHORT_VERSION_STRING "${major_version}.${minor_version}.${release_number}"
@@ -267,7 +269,9 @@ smtg_target_add_plugin_resources(${target}
 )
 
 if(APPLE)
-    if (NOT SMTG_CREATE_AU_VERSION)
+    if (SMTG_CREATE_AU_VERSION)
+        smtg_target_codesign(${target} ${SMTG_IOS_DEVELOPMENT_TEAM} ${SMTG_CODE_SIGN_IDENTITY_MAC})
+    else()
         smtg_target_set_bundle(${target} INFOPLIST "${CMAKE_CURRENT_SOURCE_DIR}/mac/Info.plist" PREPROCESS)
         # adding PkgInfo at root level makes plugin appear as a file instead of folder
         smtg_target_add_plugin_resources(${target} RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/mac/PkgInfo" OUTPUT_SUBDIRECTORY "../")
