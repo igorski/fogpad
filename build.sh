@@ -78,9 +78,6 @@ if [ $buildStatus -eq 0 ]; then
 
     if [ "$type" == "vst2" ]; then
         mv "${FILE}" ./VST3/fogpad.vst
-    elif [ "$type" == "au" ]; then
-        killall -9 AudioComponentRegistrar
-        auval -v aufx rvb2 IGOR 
     fi
     echo "Plugin built successfully"
 else

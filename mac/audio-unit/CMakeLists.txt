@@ -3,19 +3,21 @@ include(SMTG_AddVST3AuV3)
 
 function(create_audio_unit vst3_target)
     message(STATUS "SMTG_CREATE_AU_VERSION is set. Creating Audio Unit version of the plugin.")
+
+    set(audio_unit_src_dir ${CMAKE_CURRENT_SOURCE_DIR}/mac/audio-unit)
     
     set(au_app_sources
-        ${CMAKE_CURRENT_SOURCE_DIR}/audio-unit/Sources/ViewController.m
-        ${CMAKE_CURRENT_SOURCE_DIR}/audio-unit/Sources/ViewController.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/audio-unit/Sources/AppDelegate.m
-        ${CMAKE_CURRENT_SOURCE_DIR}/audio-unit/Sources/AppDelegate.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/audio-unit/audiounitconfig.h
+        ${audio_unit_src_dir}/Sources/ViewController.m
+        ${audio_unit_src_dir}/Sources/ViewController.h
+        ${audio_unit_src_dir}/Sources/AppDelegate.m
+        ${audio_unit_src_dir}/Sources/AppDelegate.h
+        ${audio_unit_src_dir}/audiounitconfig.h
     )
 
     set(au_app_ui_resources
-        ${CMAKE_CURRENT_SOURCE_DIR}/audio-unit/Resources/Base.lproj/Main.storyboard
-        ${CMAKE_CURRENT_SOURCE_DIR}/audio-unit/Resources/plugin.icns
-        ${CMAKE_CURRENT_SOURCE_DIR}/audio-unit/Shared/drumLoop.wav
+        ${audio_unit_src_dir}/Resources/Base.lproj/Main.storyboard
+        ${audio_unit_src_dir}/Resources/plugin.icns
+        ${audio_unit_src_dir}/Shared/drumLoop.wav
     )
     
     # these redefine values set in SMTG_AddVST3AuV3.cmake ---
@@ -27,9 +29,7 @@ function(create_audio_unit vst3_target)
         ${VST3_SDK_ROOT}/public.sdk/source/vst/auv3wrapper/Shared/AUv3WrapperFactory.mm
         ${VSTSDK_PLUGIN_SOURCE}
     )   
-    # these redefine values set in SMTG_CodeSign.cmake
-    set(SMTG_XCODE_OTHER_CODE_SIGNING_FLAGS "--timestamp --deep" CACHE STRING "Other code signing flags [Xcode]")
-     # --- E.O. SMTG_*.cmake overrides
+    # --- E.O. SMTG_*.cmake overrides
 
     set(au_target ${target}_auv3)
 
@@ -38,12 +38,12 @@ function(create_audio_unit vst3_target)
         "macOS"
         "Fogpad AUV3"
         "nl.igorski.vst.${target}"
-        "${CMAKE_CURRENT_SOURCE_DIR}/audio-unit/audiounitconfig.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/audio-unit/plugin.entitlements"
+        "${audio_unit_src_dir}/audiounitconfig.h"
+        "${audio_unit_src_dir}/plugin.entitlements"
         "${au_app_sources}"
         "${au_app_ui_resources}"
-        "${CMAKE_CURRENT_SOURCE_DIR}/audio-unit/Resources/Info.plist"
-        "${CMAKE_CURRENT_SOURCE_DIR}/audio-unit/Shared/Info.plist"
+        "${audio_unit_src_dir}/Resources/Info.plist"
+        "${audio_unit_src_dir}/Shared/Info.plist"
         ${vst3_target}
     )
 
@@ -66,9 +66,5 @@ function(create_audio_unit vst3_target)
             pluginterfaces
             sdk
             sdk_hosting
-    )
-
-    install(TARGETS ${au_target}
-        DESTINATION "$ENV{HOME}/Library/Audio/Plug-Ins/Components"
     )
 endfunction()
