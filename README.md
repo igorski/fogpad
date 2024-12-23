@@ -140,7 +140,7 @@ After which you can run the build script like so:
 sh build.sh --type au
 ```
 
-The Audio Unit component will be located in `./build/bin/Release/Fogpaud AUv3.app`
+The Audio Unit component will be located in `./build/bin/Release/Fogpad AUv3.app`
 
 You can validate the Audio Unit using Apple's _auval_ utility, by running `auval -v aufx rvb2 IGOR` on the command line. Note that there is the curious behaviour that you might need to reboot before the plugin shows up, though you can force a flush of the Audio Unit cache at runtime by running `killall -9 AudioComponentRegistrar`.
 
