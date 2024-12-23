@@ -41,8 +41,7 @@ target VST2 builds), you can invoke all build scripts by providing the `VST3_SDK
 VST3_SDK_ROOT=/path/to/prebuilt/VST3_SDK sh build.sh
 ```
 
-After [getting the Steinberg SDK](https://www.steinberg.net/developers/) you must generate a release build of its sources.
-To do this, execute the following commands from the root of the Steinberg SDK folder:
+After downloading the Steinberg SDK you must generate a release build of its sources. To do this, execute the following commands from the root of the Steinberg SDK folder:
 
 ```
 cd vst3sdk
