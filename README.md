@@ -12,9 +12,7 @@ The project uses [CMake](https://cmake.org) to generate the Makefiles and has be
 
 Apart from requiring _CMake_ and a C(++) compiler such as _Clang_ or _MSVC_, the only other dependency is the [VST SDK from Steinberg](https://www.steinberg.net/en/company/developers.html) (the projects latest update requires SDK version 3.7.11).
 
-Be aware that prior to building the plugin, the Steinberg SDK needs to be built from source as well.
-
-#### The simple way : installing a plugin-local version of the Steinberg SDK
+#### The easy way : installing a plugin-local version of the Steinberg SDK
 
 You can instantly retrieve and build the SDK using the following commands.
 
@@ -36,14 +34,15 @@ This will create a (Git ignored) subfolder in this repository folder with a preb
 
 #### The flexible way : pointing towards an external SDK build / supporting VST2
 
-If you wish to use a different SDK version (for instance to reuse an existing build elsewhere on your computer, for instance to
-target VST2.4 builds), you can invoke all build scripts by providing the `VST3_SDK_ROOT` environment variable, like so:
+In case you wish to use a different SDK version (for instance to reuse an existing build elsewhere on your computer or to
+target VST2 builds), you can invoke all build scripts by providing the `VST3_SDK_ROOT` environment variable, like so:
 
 ```
 VST3_SDK_ROOT=/path/to/prebuilt/VST3_SDK sh build.sh
 ```
 
-To first generate a release build of the SDK, execute the following commands from the root of the Steinberg SDK folder:
+After [getting the Steinberg SDK](https://www.steinberg.net/developers/) you must generate a release build of its sources.
+To do this, execute the following commands from the root of the Steinberg SDK folder:
 
 ```
 cd vst3sdk
@@ -55,7 +54,7 @@ cmake --build . --config Release
 
 The result being that `{VST3_SDK_ROOT}/build/lib/Release/` will contain the Steinberg VST libraries required to build the plugin.
 
-In case you intend to build VST2 versions as well keep in mind that as of SDK 3.6.11, Steinberg no longer packages the required `/pluginterfaces/vst2.x`-folder inside the vst3sdk folder. If you wish to build a VST2 plugin, copying the folder from an older SDK version _could_ work (verified 3.6.9. `vst2.x` folders to work with SDK 3.7.11), though be aware that you _need a license to target VST2_. You can view [Steinbergs rationale on this decision here](https://helpcenter.steinberg.de/hc/en-us/articles/4409561018258-VST-2-Discontinued).
+In case you intend to build VST2 versions as well, keep in mind that as of SDK 3.6.11, Steinberg no longer packages the required `/pluginterfaces/vst2.x`-folder inside the vst3sdk folder. If you wish to build a VST2 plugin, copying the folder from an older SDK version _could_ work (verified 3.6.9. `vst2.x` folders to work with SDK 3.7.11), though be aware that you _need a license to target VST2_. You can view [Steinbergs rationale on this decision here](https://helpcenter.steinberg.de/hc/en-us/articles/4409561018258-VST-2-Discontinued).
 
 To prepare for building VST2 versions of the plugin, run the following from the root of the Steinberg SDK folder (run the _.bat_ version instead of the _.sh_ version on Windows) prior to building the library:
 
@@ -89,7 +88,7 @@ Assuming the Visual Studio Build Tools have been installed:
 build.bat
 ```
 
-Where you can optionally append `vst2` to the command to build a VST 2* plugin.
+Where you can optionally append `vst2` to the command to build a VST2* plugin.
 
 _*As mentioned in the "setup" section, VST2 builds are not supported out-of-the-box._
 

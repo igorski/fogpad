@@ -2,8 +2,6 @@
 include(SMTG_AddVST3AuV3)
 
 function(create_audio_unit vst3_target)
-    message(STATUS "SMTG_CREATE_AU_VERSION is set. Creating Audio Unit version of the plugin.")
-
     set(audio_unit_src_dir ${CMAKE_CURRENT_SOURCE_DIR}/mac/audio-unit)
     
     set(au_app_sources
