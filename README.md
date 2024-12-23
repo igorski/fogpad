@@ -159,7 +159,7 @@ When debugging, you can also choose to run the plugin against Steinbergs validat
 
 ### Signing the plugin on macOS
 
-You will need to have your code signing set up appropriately. Assuming you have set up your Apple Developer account appropriately, you can find your sign identity like so:
+You will need to have your code signing set up appropriately. Assuming you have set up your Apple Developer account, you can find your signing identity like so:
 
 ```
 security find-identity -p codesigning -v 
