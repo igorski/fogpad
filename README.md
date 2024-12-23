@@ -130,7 +130,7 @@ running an up to date system... _still, you can likely ignore this section_.
 
 For this you will need a little extra preparation while building Steinberg SDK as you will need the
 "[CoreAudio SDK](https://developer.apple.com/library/archive/samplecode/CoreAudioUtilityClasses/Introduction/Intro.html)" and XCode. Execute the following instructions to build the SDK with Audio Unit support,
-replace the value for `SMTG_COREAUDIO_SDK_PATH` with the actual installation location of the CoreAudio SDK:
+providing the appropriate path to the actual installation location of the CoreAudio SDK:
 
 ```
 sh setup.sh --platform mac --coresdk /path/to/CoreAudioUtilityClasses/CoreAudio
@@ -142,10 +142,9 @@ After which you can run the build script like so:
 sh build.sh --type au
 ```
 
-The Audio Unit component will be located in `~/build/bin/Release/Fogpad AUV3.app`. You can install the component by dragging
-it into your Applications folder.
+The Audio Unit component will be located in `./build/bin/Release/Fogpaud AUv3.app`
 
-You can validate the Audio Unit using Apple's _auval_ utility, by running _auval -v aufx rvb2 IGOR_ on the command line. Note that there is the curious behaviour that you might need to reboot before the plugin shows up, though you can force a flush of the Audio Unit cache at runtime by running _killall -9 AudioComponentRegistrar_.
+You can validate the Audio Unit using Apple's _auval_ utility, by running `auval -v aufx rvb2 IGOR` on the command line. Note that there is the curious behaviour that you might need to reboot before the plugin shows up, though you can force a flush of the Audio Unit cache at runtime by running `killall -9 AudioComponentRegistrar`.
 
 In case of errors you can look for instances of [kAudioUnitErr](https://www.osstatus.com/search/results?platform=all&framework=all&search=kaudiouniterr)
 
