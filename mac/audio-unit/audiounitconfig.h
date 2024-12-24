@@ -39,7 +39,7 @@
 // The preview audio file name.
 // To add your own custom audio file (for standalone effects), add an audio file to the project (AUv3WrappermacOS and AUv3WrapperiOS targets) and
 // enter the file name here
-#define kAudioFileName "drumLoop"
+#define kAudioFileName "loop"
 
 // The preview audio file format.
 // To add your own custom audio file (for standalone effects), add an audio file to the project (AUv3WrappermacOS and AUv3WrapperiOS targets) and

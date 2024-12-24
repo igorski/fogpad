@@ -5,17 +5,17 @@ function(create_audio_unit vst3_target)
     set(audio_unit_src_dir ${CMAKE_CURRENT_SOURCE_DIR}/mac/audio-unit)
     
     set(au_app_sources
-        ${audio_unit_src_dir}/Sources/ViewController.m
-        ${audio_unit_src_dir}/Sources/ViewController.h
-        ${audio_unit_src_dir}/Sources/AppDelegate.m
-        ${audio_unit_src_dir}/Sources/AppDelegate.h
+        ${audio_unit_src_dir}/src/ViewController.m
+        ${audio_unit_src_dir}/src/ViewController.h
+        ${audio_unit_src_dir}/src/AppDelegate.m
+        ${audio_unit_src_dir}/src/AppDelegate.h
         ${audio_unit_src_dir}/audiounitconfig.h
     )
 
     set(au_app_ui_resources
-        ${audio_unit_src_dir}/Resources/Base.lproj/Main.storyboard
-        ${audio_unit_src_dir}/Resources/plugin.icns
-        ${audio_unit_src_dir}/Shared/drumLoop.wav
+        ${audio_unit_src_dir}/resource/Main.storyboard
+        ${audio_unit_src_dir}/resource/plugin.icns
+        ${audio_unit_src_dir}/resource/loop.wav
     )
     
     # these redefine values set in SMTG_AddVST3AuV3.cmake ---
@@ -40,8 +40,8 @@ function(create_audio_unit vst3_target)
         "${audio_unit_src_dir}/plugin.entitlements"
         "${au_app_sources}"
         "${au_app_ui_resources}"
-        "${audio_unit_src_dir}/Resources/Info.plist"
-        "${audio_unit_src_dir}/Shared/Info.plist"
+        "${audio_unit_src_dir}/resource/Info.plist"
+        "${audio_unit_src_dir}/resource/Info.appex.plist"
         ${vst3_target}
     )
 
