@@ -71,6 +71,9 @@ if [ $buildStatus -eq 0 ]; then
             FILE="./bin/Release/Fogpad AUV3.app"
         fi
         codesign -s "${identity}" "${FILE}" --timestamp --deep --strict --options=runtime --force
+        if [ "$type" == "au" ]; then
+            codesign -s "${identity}" "${FILE}/Contents/PlugIns/auv3.appex" --timestamp --deep --strict --options=runtime --force --entitlements "${BASEDIR}/mac/audio-unit/plugin.entitlements"
+        fi
         codesign --verify --deep --verbose "${FILE}"
     fi
 
