@@ -79,25 +79,25 @@ tresult PLUGIN_API FogPadController::initialize( FUnknown* context )
 
     parameters.addParameter( new RangeParameter(
         USTRING( "Size" ), kReverbSizeId, USTRING( "0 - 1" ),
-        0.f, 1.f, 0.f,
+        0.f, 1.f, 0.5f,
         0, ParameterInfo::kCanAutomate, unitId
     ));
 
     parameters.addParameter( new RangeParameter(
         USTRING( "Width" ), kReverbWidthId, USTRING( "0 - 1" ),
-        0.f, 1.f, 0.f,
+        0.f, 1.f, 1.f,
         0, ParameterInfo::kCanAutomate, unitId
     ));
 
     parameters.addParameter( new RangeParameter(
         USTRING( "Dry mix" ), kReverbDryMixId, USTRING( "0 - 1" ),
-        0.f, 1.f, 0.f,
+        0.f, 1.f, 0.5f,
         0, ParameterInfo::kCanAutomate, unitId
     ));
 
     parameters.addParameter( new RangeParameter(
         USTRING( "Wet mix" ), kReverbWetMixId, USTRING( "0 - 1" ),
-        0.f, 1.f, 0.f,
+        0.f, 1.f, 0.5f,
         0, ParameterInfo::kCanAutomate, unitId
     ));
 
@@ -107,7 +107,7 @@ tresult PLUGIN_API FogPadController::initialize( FUnknown* context )
 
     parameters.addParameter( new RangeParameter(
         USTRING( "Wobble" ), kReverbPlaybackRateId, USTRING( "0 - 1" ),
-        0.f, 1.f, 0.f,
+        0.f, 1.f, 0.5f,
         0, ParameterInfo::kCanAutomate, unitId
     ));
 
@@ -137,21 +137,24 @@ tresult PLUGIN_API FogPadController::initialize( FUnknown* context )
 
     parameters.addParameter( new RangeParameter(
         USTRING( "Bother LFO depth" ), kLFOBitResolutionDepthId, USTRING( "%" ),
-        0.f, 1.f, 0.f,
+        0.f, 1.f, 0.5f,
         0, ParameterInfo::kCanAutomate, unitId
     ));
 
     // Filter controls
 
+    float co  = Igorski::VST::FILTER_MIN_FREQ + ( 0.5f * ( Igorski::VST::FILTER_MAX_FREQ - Igorski::VST::FILTER_MIN_FREQ ));
+    float res = Igorski::VST::FILTER_MIN_RESONANCE + ( 1.f * ( Igorski::VST::FILTER_MAX_RESONANCE - Igorski::VST::FILTER_MIN_RESONANCE ));
+
     parameters.addParameter( new RangeParameter(
         USTRING( "Filter cutoff" ), kFilterCutoffId, USTRING( "Hz" ),
-        Igorski::VST::FILTER_MIN_FREQ, Igorski::VST::FILTER_MAX_FREQ, Igorski::VST::FILTER_MIN_FREQ,
+        Igorski::VST::FILTER_MIN_FREQ, Igorski::VST::FILTER_MAX_FREQ, co,
         0, ParameterInfo::kCanAutomate, unitId
     ));
 
     parameters.addParameter( new RangeParameter(
         USTRING( "Filter resonance" ), kFilterResonanceId, USTRING( "dB" ),
-         Igorski::VST::FILTER_MIN_RESONANCE, Igorski::VST::FILTER_MAX_RESONANCE, Igorski::VST::FILTER_MIN_RESONANCE,
+        Igorski::VST::FILTER_MIN_RESONANCE, Igorski::VST::FILTER_MAX_RESONANCE, res,
         0, ParameterInfo::kCanAutomate, unitId
     ));
 
@@ -163,7 +166,7 @@ tresult PLUGIN_API FogPadController::initialize( FUnknown* context )
 
     parameters.addParameter( new RangeParameter(
         USTRING( "Filter LFO depth" ), kLFOFilterDepthId, USTRING( "%" ),
-        0.f, 1.f, 0.f,
+        0.f, 1.f, 0.5f,
         0, ParameterInfo::kCanAutomate, unitId
     ));
 

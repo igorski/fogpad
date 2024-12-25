@@ -11,11 +11,12 @@ set(CMAKE_COLOR_MAKEFILE ON)
 project(Fogpad)
 set(PROJECT_VERSION 1)
 set(target fogpad)
-set(copyright "igorski.nl 2019-2023")
+set(copyright "igorski.nl 2019-2024")
 set(major_version 1)
 set(minor_version 0)
 set(release_number 3)
 set(build_number 1) # TODO supply through CLI (build number is not included in public facing version strings)
+set(version_string "${major_version}.${minor_version}.${release_number}") # also see audiounitconfig.h#kAUcomponentVersion and related Info.plist
 set(SMTG_CREATE_MODULE_INFO false)
 
 #####################
@@ -35,16 +36,18 @@ if(MSVC)
 endif()
 
 if(UNIX)
-    if(XCODE)
-       set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++17")
-       set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
-    elseif(APPLE)
-       set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
-       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -stdlib=libc++")
-       link_libraries(c++)
-       # support Yosemite and up
-       set(CMAKE_OSX_SYSROOT macosx10.13)
-       set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13")
+    if(APPLE)
+        if (XCODE)
+            set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++17")
+            set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
+        else()
+            set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -stdlib=libc++")
+            link_libraries(c++)
+        endif()
+        # support Yosemite and up
+        set(CMAKE_OSX_SYSROOT macosx10.13)
+        set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13")
     else()
         set(LINUX true)
         add_definitions( -D__cdecl= )
@@ -64,24 +67,23 @@ endif()
 
 list(APPEND CMAKE_MODULE_PATH "${VST3_SDK_ROOT}/cmake/modules")
 
-include(SMTG_Global)
+# include(SMTG_AAXSupport)
 include(SMTG_AddVST3Library)
+include(SMTG_AddVST3Options)
 include(SMTG_Bundle)
+include(SMTG_CoreAudioSupport)
 include(SMTG_ExportedSymbols)
-include(SMTG_PrefixHeader)
+include(SMTG_Global)
 include(SMTG_PlatformIOS)
 include(SMTG_PlatformToolset)
-include(SMTG_CoreAudioSupport)
-include(SMTG_AAXSupport)
-include(SMTG_VstGuiSupport)
+include(SMTG_PrefixHeader)
 include(SMTG_UniversalBinary)
-include(SMTG_AddVST3Options)
+include(SMTG_VstGuiSupport)
 
 #########################
 # Steinberg VST sources #
 #########################
 
-set(VSTSDK_INCLUDE_DIR ${VST3_SDK_ROOT})
 set(VSTSDK_PLUGIN_SOURCE
     ${VST3_SDK_ROOT}/public.sdk/source/common/commoniids.cpp
     ${VST3_SDK_ROOT}/public.sdk/source/vst/vstaudioeffect.cpp
@@ -152,67 +154,23 @@ if(SMTG_CREATE_VST2_VERSION)
     endif()
 endif()
 
-
 set(vst_resources
     "resource/background.png"
     "resource/version.png"
 )
 set(vst_ui_descr "resource/plugin.uidesc")
 
-##############
-# Audio Unit #
-##############
-
-if (JAMBA_ENABLE_AUDIO_UNIT)
-    set(JAMBA_TEST_CASES_DIR "${JAMBA_ROOT}/test/cpp")
-    set(JAMBA_TEST_CASES_SOURCES
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/Utils/Collection/test-CircularBuffer.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/Utils/Concurrent/test-concurrent.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/Utils/Concurrent/test-concurrent_lockfree.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/Utils/test-Lerp.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/Utils/test-StringUtils.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/VST/GUI/Params/test-GUIParameters.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/VST/GUI/Params/test-ParamAware.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/VST/GUI/Views/test-CustomViewCreator.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/VST/GUI/Views/test-SelfContainedViewListener.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/VST/test-AudioBuffers.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/VST/test-AudioUtils.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/VST/test-ParamConverters.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/VST/test-SampleRateBasedClock.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/VST/Utils/test-Utils.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/VST/Utils/test-FastWriteMemoryStream.cpp
-        ${JAMBA_TEST_CASES_DIR}/pongasoft/VST/Utils/test-ReadOnlyMemoryStream.cpp
-    )
-
-    include(jamba.cmake)
-    set(CPP_SOURCES src)
-
-    configure_file(${CPP_SOURCES}/version.h ${CMAKE_BINARY_DIR}/generated/version.h)
-    include_directories(${CMAKE_BINARY_DIR}/generated/)
-
-    jamba_add_vst_plugin(
-        TARGET              "${target}"
-        RELEASE_FILENAME    "${target}.component"
-        TARGETS_PREFIX      "jmb_"
-        VST_SOURCES         "${vst_sources}"
-        UIDESC              "${vst_ui_descr}"
-        RESOURCES           "${vst_resources}"
-        TEST_CASE_SOURCES   "${JAMBA_TEST_CASES_SOURCES}"
-        TEST_LINK_LIBRARIES "jamba"
-    )
-
-else()
-
 #######
 # VST #
 #######
 
 smtg_add_vst3plugin(${target} ${vst_sources})
+smtg_target_configure_version_file(${target})
 
 ## include Steinberg libraries
 
-set(steinberg_libs "base" "pluginterfaces" "sdk" "vstgui_support" "vstgui_uidescription" "vstgui")
-include_directories(${VSTSDK_INCLUDE_DIR})
+set(steinberg_libs "base" "pluginterfaces" "sdk" "vstgui" "vstgui_support" "vstgui_uidescription")
+include_directories(${VST3_SDK_ROOT})
 foreach(lib IN ITEMS ${steinberg_libs})
     if(UNIX)
         target_link_libraries(${target} PRIVATE ${VST3_SDK_ROOT}/build/lib/Release/lib${lib}.a)
@@ -235,32 +193,9 @@ target_sources(${target} PRIVATE
 IF (APPLE)
     target_sources (${target} PRIVATE
         ${VST3_SDK_ROOT}/public.sdk/source/main/macmain.cpp
-        ${VST3_SDK_ROOT}/vstgui4/vstgui/vstgui_mac.mm
     )
     if(XCODE)
-        if(SMTG_IOS_DEVELOPMENT_TEAM)
-            ## iOS plugin
-            set(target ${target}_ios)
-            smtg_add_ios_vst3plugin("${SMTG_CODE_SIGN_IDENTITY_IOS}" ${target} "${target}" "${vst_sources}")
-            set_target_properties(${target} PROPERTIES ${SDK_IDE_PLUGIN_EXAMPLES_FOLDER})
-            target_link_libraries(${target} PRIVATE
-                base_ios
-                sdk_ios
-                "-framework UIKit"
-                "-framework CoreGraphics"
-                "-framework QuartzCore"
-                "-framework CoreText"
-                "-framework Accelerate"
-                "-framework ImageIO"
-                "-framework MobileCoreServices"
-            )
-            target_sources(${target} PRIVATE
-                ${VST3_SDK_ROOT}/vstgui4/vstgui/vstgui_ios.mm
-            )
-        else()
-            ## macOS plugin
-            target_link_libraries(${target} PRIVATE "-framework Cocoa" "-framework OpenGL" "-framework Accelerate" "-framework QuartzCore" "-framework Carbon")
-        endif()
+        target_link_libraries(${target} PRIVATE "-framework Cocoa" "-framework OpenGL" "-framework Accelerate" "-framework QuartzCore" "-framework Carbon")
     else()
         find_library(COREFOUNDATION_FRAMEWORK CoreFoundation)
         find_library(COCOA_FRAMEWORK Cocoa)
@@ -276,10 +211,10 @@ IF (APPLE)
         BUNDLE_EXTENSION "vst3"
         XCODE_ATTRIBUTE_WRAPPER_EXTENSION "vst3"
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/mac/Info.plist"
-        MACOSX_BUNDLE_BUNDLE_NAME "${project}"
+        MACOSX_BUNDLE_BUNDLE_NAME "${target}"
         MACOSX_BUNDLE_GUI_IDENTIFIER "nl.igorski.vst.${target}"
         MACOSX_BUNDLE_ICON_FILE ""
-        MACOSX_BUNDLE_SHORT_VERSION_STRING "${major_version}.${minor_version}.${release_number}"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "${version_string}"
         MACOSX_BUNDLE_COPYRIGHT "${copyright}"
     )
 endif()
@@ -322,7 +257,7 @@ endif()
 ## Include Windows specific libraries
 
 if(WIN)
-    target_sources (${target} PRIVATE
+    target_sources(${target} PRIVATE
         ${VST3_SDK_ROOT}/public.sdk/source/main/dllmain.cpp
 #        ${VST3_SDK_ROOT}/vstgui4/vstgui/vstgui_win32.cpp
     )
@@ -335,15 +270,29 @@ smtg_target_add_plugin_resources(${target}
 )
 
 if(APPLE)
-    smtg_target_set_bundle(${target} INFOPLIST "${CMAKE_CURRENT_SOURCE_DIR}/mac/Info.plist" PREPROCESS)
-    # adding PkgInfo at root level makes plugin appear as a file instead of folder
-    smtg_target_add_plugin_resources(${target} RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/mac/PkgInfo" OUTPUT_SUBDIRECTORY "../")
+    ##############
+    # Audio Unit #
+    ##############
+    if (XCODE AND SMTG_CREATE_AU_VERSION)
+        message(STATUS "SMTG_CREATE_AU_VERSION is set. An Audio Unit version of the plug-in will be created.")
+        smtg_target_codesign(${target} ${SMTG_IOS_DEVELOPMENT_TEAM} ${SMTG_CODE_SIGN_IDENTITY_MAC})
+        add_subdirectory(mac/audio-unit)
+        create_audio_unit(${target})
+    else()
+        smtg_target_set_bundle(${target} INFOPLIST "${CMAKE_CURRENT_SOURCE_DIR}/mac/Info.plist" PREPROCESS)
+        # adding PkgInfo at root level makes plugin appear as a file instead of folder
+        smtg_target_add_plugin_resources(${target} RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/mac/PkgInfo" OUTPUT_SUBDIRECTORY "../")
+    endif()
+    smtg_target_set_bundle(${target}
+        BUNDLE_IDENTIFIER "nl.igorski.${target}"
+        COMPANY_NAME "igorski.nl"
+    )
 elseif(WIN)
     target_sources(${target} PRIVATE resource/plugin.rc)
 endif()
 
 if (SMTG_CREATE_VST2_VERSION)
-    message(STATUS "SMTG_CREATE_VST2_VERSION is set. A VST 2 version of the plug-in will be created (just rename the generated file from .vst3 to .vst).")
+    message(STATUS "SMTG_CREATE_VST2_VERSION is set. A VST 2 version of the plug-in will be created.")
     if(XCODE)
         # fix missing VSTPluginMain symbol when also building VST 2 version
         set_target_properties(${target} PROPERTIES XCODE_ATTRIBUTE_EXPORTED_SYMBOLS_FILE "")
@@ -353,26 +302,24 @@ if (SMTG_CREATE_VST2_VERSION)
     endif()
 endif()
 
-endif()
-
 ######################
 # Installation paths #
 ######################
 
 if(APPLE)
-  install(TARGETS ${target}
-    DESTINATION "$ENV{HOME}/Library/Audio/Plug-Ins/VST"
-  )
+    install(TARGETS ${target}
+        DESTINATION "$ENV{HOME}/Library/Audio/Plug-Ins/VST"
+    )
 elseif(WIN32)
-  install(TARGETS ${target}
-    DESTINATION "C:/Program Files (x86)/Common Files/VST3/"
-  )
+    install(TARGETS ${target}
+        DESTINATION "C:/Program Files (x86)/Common Files/VST3/"
+    )
 elseif(WIN)
-  install(TARGETS ${target}
-    DESTINATION "C:/Program Files/Common Files/VST3/"
-  )
+    install(TARGETS ${target}
+        DESTINATION "C:/Program Files/Common Files/VST3/"
+    )
 elseif(LINUX)
-  install(TARGETS ${target}
-    DESTINATION "/usr/lib/lxvst"
-  )
+    install(TARGETS ${target}
+        DESTINATION "/usr/lib/lxvst"
+    )
 endif()

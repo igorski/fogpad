@@ -67,7 +67,6 @@ FogPad::FogPad()
     // register its editor class (the same as used in vstentry.cpp)
     setControllerClass( VST::FogPadControllerUID );
 
-    // should be created on setupProcessing, this however doesn't fire for Audio Unit using auval?
     reverbProcess = new ReverbProcess( 2 );
 }
 
