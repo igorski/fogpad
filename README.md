@@ -69,7 +69,7 @@ And if you are running Linux, you can easily resolve all dependencies by first r
 
 ### Building the plugin
 
-See the provided shell scripts. The build output will be stored in _./build/VST3/fogpad.vst3_ as well as symbolically linked to your systems VST-plugin folder (on Unix).
+See the provided shell scripts. The build output will be stored in `./build/VST3/fogpad.vst3` as well as symbolically linked to your systems VST-plugin folder (on Unix).
 
 #### Compiling on Unix systems:
 
@@ -95,7 +95,7 @@ _*As mentioned in the "setup" section, VST2 builds are not supported out-of-the-
 
 ### Compiling for both 32-bit and 64-bit architectures
 
-Depending on your host software having 32-bit or 64-bit support (the latter for either Intel or ARM), you can best compile for a wider range of architectures. To do so, updating the build shell scripts/batch files to contain the following:
+Depending on your host software having 32-bit or 64-bit support (with the latter targeting either Intel or ARM), you can choose to compile for a wider range of architectures. To do so, updating the build shell scripts/batch files to contain the following:
 
 **macOS:**
 
@@ -120,8 +120,8 @@ Which is a little more cumbersome as you compile separate binaries for the separ
 
 Note that the above also needs to be done when building the Steinberg SDK (which for the Windows build implies that a separate build is created for each architecture).
 
-While macOS has been fully 64-bit for the past versions, building for 32-bit provides the best backward
-compatibility for older OS versions. And musicians are known to keep working systems at the cost of not
+While both macOS and Windows have been fully 64-bit for the past versions, building for 32-bit provides the best backward
+compatibility for older OS versions. Musicians are known to keep working systems at the cost of not
 running an up to date system... _still, you can likely ignore this section_.
 
 ### Build as Audio Unit (macOS only)
