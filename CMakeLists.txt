@@ -16,6 +16,7 @@ set(major_version 1)
 set(minor_version 0)
 set(release_number 3)
 set(build_number 1) # TODO supply through CLI (build number is not included in public facing version strings)
+set(version_string "${major_version}.${minor_version}.${release_number}") # also see audiounitconfig.h#kAUcomponentVersion and related Info.plist
 set(SMTG_CREATE_MODULE_INFO false)
 
 #####################
@@ -213,7 +214,7 @@ IF (APPLE)
         MACOSX_BUNDLE_BUNDLE_NAME "${target}"
         MACOSX_BUNDLE_GUI_IDENTIFIER "nl.igorski.vst.${target}"
         MACOSX_BUNDLE_ICON_FILE ""
-        MACOSX_BUNDLE_SHORT_VERSION_STRING "${major_version}.${minor_version}.${release_number}"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "${version_string}"
         MACOSX_BUNDLE_COPYRIGHT "${copyright}"
     )
 endif()

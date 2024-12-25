@@ -142,7 +142,7 @@ sh build.sh --type au
 
 The Audio Unit component will be located in `./build/bin/Release/Fogpad AUv3.app`
 
-You can validate the Audio Unit using Apple's _auval_ utility, by running `auval -v aufx rvb2 IGOR` on the command line. Note that there is the curious behaviour that you might need to reboot before the plugin shows up, though you can force a flush of the Audio Unit cache at runtime by running `killall -9 AudioComponentRegistrar`.
+You can validate the Audio Unit using Apple's _auval_ utility, by running `auval -v aufx rvb2 IGOR` on the command line (reflecting the values defined in `Info.appex.plist`). Note that there is the curious behaviour that you might need to reboot before the plugin shows up, though you can force a flush of the Audio Unit cache at runtime by running `killall -9 AudioComponentRegistrar`.
 
 In case of errors you can look for instances of [kAudioUnitErr](https://www.osstatus.com/search/results?platform=all&framework=all&search=kaudiouniterr)
 
