@@ -12,7 +12,7 @@ The project uses [CMake](https://cmake.org) to generate the Makefiles and has be
 
 Apart from requiring _CMake_ and a C(++) compiler such as _Clang_ or _MSVC_, the only other dependency is the [VST SDK from Steinberg](https://www.steinberg.net/en/company/developers.html) (the projects latest update requires SDK version 3.7.11).
 
-#### The easy way : installing a plugin-local version of the Steinberg SDK
+#### Setting up the easy way : installing a local version of the Steinberg SDK
 
 You can instantly retrieve and build the SDK using the following commands.
 
@@ -32,7 +32,7 @@ setup.bat
 
 This will create a (Git ignored) subfolder in this repository folder with a prebuilt Steinberg SDK.
 
-#### The flexible way : pointing towards an external SDK build / supporting VST2
+#### Setting up the flexible way : pointing towards an external SDK build / supporting VST2
 
 In case you wish to use a different SDK version (for instance to reuse an existing build elsewhere on your computer or to
 target VST2 builds), you can invoke all build scripts by providing the `VST3_SDK_ROOT` environment variable, like so:
