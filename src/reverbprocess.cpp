@@ -156,7 +156,7 @@ void ReverbProcess::setPlaybackRate( float value )
         _playbackRate = 1.0f;
     }
      else {
-        _playbackRate = MIN_PLAYBACK_RATE + Calc::scale(value, 1.0f, 1.0f );
+        _playbackRate = MIN_PLAYBACK_RATE + Calc::scale( value, 1.0f, 1.0f );
     }
 }
 
