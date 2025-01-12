@@ -24,6 +24,8 @@ sh setup.sh --platform PLATFORM
 
 Where optional flag _--platform_ can be either `mac` or `linux` (defaults to linux).
 
+Linux users might be interested in the [required packages](https://steinbergmedia.github.io/vst3_dev_portal/pages/Getting+Started/How+to+setup+my+system.html#for-linux).
+
 ##### Installation on Windows:
 
 ```

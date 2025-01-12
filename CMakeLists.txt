@@ -53,7 +53,7 @@ if(UNIX)
         add_definitions( -D__cdecl= )
         set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wno-multichar")
-        link_libraries(stdc++fs pthread dl)
+        link_libraries(stdc++fs pthread dl pango-1.0 pangocairo-1.0)
     endif()
 else()
     ## spotted to not be set by default on VS CLI. Here we assume any non-Unix
@@ -320,6 +320,6 @@ elseif(WIN)
     )
 elseif(LINUX)
     install(TARGETS ${target}
-        DESTINATION "/usr/lib/lxvst"
+        DESTINATION "/usr/local/lib/vst3"
     )
 endif()

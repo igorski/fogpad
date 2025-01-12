@@ -34,7 +34,7 @@ if [ "$platform" == "mac" ]; then
     cmake -GXcode -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" ${FLAGS} ..
 else
     echo "Building for Linux..."
-    make
+    cmake -DCMAKE_BUILD_TYPE=Release ..
 fi
 
 cmake --build . --config Release
