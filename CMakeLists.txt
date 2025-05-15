@@ -275,6 +275,7 @@ if(APPLE)
     ##############
     if (XCODE AND SMTG_CREATE_AU_VERSION)
         message(STATUS "SMTG_CREATE_AU_VERSION is set. An Audio Unit version of the plug-in will be created.")
+        target_compile_definitions(${target} PRIVATE BUILD_AUDIO_UNIT)
         smtg_target_codesign(${target} ${SMTG_IOS_DEVELOPMENT_TEAM} ${SMTG_CODE_SIGN_IDENTITY_MAC})
         add_subdirectory(mac/audio-unit)
         create_audio_unit(${target})
